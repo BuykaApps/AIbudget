@@ -70,7 +70,8 @@ const sum=(a,k)=>a.reduce((s,x)=>s+(+x[k]||0),0);
 const today=ymd(new Date());
 let S={settings:[],balance:[],income:[],loans:[],expenses:[],budgets:[]};
 let tab='home',month=today.slice(0,7);
-const API='ЭНД_APPS_SCRIPT_WEB_APP_URL'; // нэг удаа тохируулна
+const API_URL='ЭНД_APPS_SCRIPT_WEB_APP_URL'; // эндээ бичиж болно, эсвэл нэвтрэх дэлгэц дээр нэг удаа оруулбал browser санана
+let API=API_URL.indexOf('http')==0?API_URL:(localStorage.api||'');
 let TOK=localStorage.sess||'';
 const TABS=[['home','<b>⌂</b>Нүүр'],['inc','<b>◈</b>Орлого'],['loan','<b>⛓</b>Зээл'],['exp','<b>▤</b>Зарлага'],['bud','<b>◎</b>Төсөв'],['ai','<b>✦</b>AI туслах'],['set','<b>⚙</b>Тохиргоо']];
 const CATS=['Хувцас','Хоол','Тээвэр','Гэр','Эрүүл мэнд','Зугаа цэнгэл','Бусад'];
@@ -82,14 +83,14 @@ function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';se
 
 const post=(b,sig)=>fetch(API,{method:'POST',body:JSON.stringify({...b,t:TOK}),signal:sig}).then(r=>r.json());
 async function load(){
-  if(!TOK)return;
+  if(!TOK||!API)return;
   try{const j=await(await fetch(API+'?t='+encodeURIComponent(TOK))).json();
     if(j.error=='auth'){localStorage.removeItem('sess');TOK='';return render()}if(j.error)throw j.error;S=j}
   catch(e){toast('Холбогдсонгүй: '+e)}
   render();
 }
-const loginView=()=>`<div class=login><div class=lg>◈</div><h1>NEO·САНХҮҮ</h1><small>Нууц үгээ оруулж нэвтэрнэ үү</small><input id=pw type=password placeholder="Нууц үг" onkeydown="if(event.key=='Enter')login()"><button class=p onclick="login()">Нэвтрэх</button></div>`;
-async function login(){try{const j=await post({a:'login',pw:$('#pw').value});if(j.error)throw j.error;localStorage.sess=TOK=j.token;tab='home';render();load()}catch(e){toast(e)}}
+const loginView=()=>`<div class=login><div class=lg>◈</div><h1>NEO·САНХҮҮ</h1><small>Нууц үгээ оруулж нэвтэрнэ үү</small>${API?'':'<input id=au placeholder="Apps Script Web App URL">'}<input id=pw type=password placeholder="Нууц үг" onkeydown="if(event.key=='Enter')login()"><button class=p onclick="login()">Нэвтрэх</button></div>`;
+async function login(){try{if(!API){const u=$('#au').value.trim();if(u.indexOf('http')!=0)throw 'Web App URL оруулна уу';localStorage.api=API=u}const j=await post({a:'login',pw:$('#pw').value});if(j.error)throw j.error;localStorage.sess=TOK=j.token;tab='home';render();load()}catch(e){toast(e)}}
 let chat=[];
 function ctx(){const b=bal();if(!b)return{};const c=cur(),np=pays(today,add(today,45)).find(p=>!p.got)||{date:add(today,15),amt:0},m=today.slice(0,7),cat={};
   S.expenses.filter(e=>e.date.slice(0,7)==m).forEach(e=>cat[e.cat||'Бусад']=(cat[e.cat||'Бусад']||0)+ +e.amount);
@@ -258,8 +259,8 @@ function form(col,fields,rec){
     save(col,{...rec,...o},rec.id)};
 }
 function render(){
-  document.body.className=TOK?'ok':'';
-  if(!TOK){$('#nav').innerHTML='';$('#app').innerHTML=loginView();return}
+  document.body.className=TOK&&API?'ok':'';
+  if(!TOK||!API){$('#nav').innerHTML='';$('#app').innerHTML=loginView();return}
   $('#nav').innerHTML='<div class=brand>◈ NEO·САНХҮҮ</div>'+TABS.map(t=>`<button class="${tab==t[0]?'on':''}" onclick="tab='${t[0]}';render()">${t[1]}</button>`).join('');
   $('#app').innerHTML={home,inc,loan,exp,bud,ai,set}[tab]();
   const m=$('#msgs');if(m)m.scrollTop=m.scrollHeight;
