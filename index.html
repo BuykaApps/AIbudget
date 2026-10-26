@@ -3,37 +3,46 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Миний санхүү</title>
 <style>
-:root{--bg:#0b100e;--c:#151d19;--c2:#1c2721;--t:#eaf2ed;--m:#8a9b92;--a:#3ddc97;--a2:#2bb3c0;--r:#ff6b6b;--l:#26332c}
-@media(prefers-color-scheme:light){:root{--bg:#eef3ef;--c:#fff;--c2:#f1f6f2;--t:#16221c;--m:#64766c;--a:#12916a;--a2:#1b8fa0;--r:#d9433a;--l:#dde7e0}}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 400px at 80% -10%,#1b8f7833,transparent),var(--bg);color:var(--t);font:15px/1.45 system-ui,sans-serif}
-main{max-width:760px;margin:0 auto;padding:14px 14px 100px}
-nav{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);width:min(520px,94vw);display:flex;justify-content:space-around;background:color-mix(in srgb,var(--c) 88%,transparent);backdrop-filter:blur(12px);border:1px solid var(--l);border-radius:22px;padding:6px;z-index:5;box-shadow:0 8px 30px #0006}
-nav button{flex:1;border:0;background:none;color:var(--m);padding:6px 2px;border-radius:16px;font-size:11px;cursor:pointer}
-nav button b{display:block;font-size:19px;font-weight:400}nav button.on{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff}
-.card{background:var(--c);border:1px solid var(--l);border-radius:20px;padding:16px;margin:14px 0;overflow-x:auto}
-.hero{background:linear-gradient(135deg,#0f5c46,#1b8f78 55%,#2bb3c0);color:#fff;border-radius:26px;padding:22px;margin:6px 0 14px;box-shadow:0 14px 40px #1b8f7840}
-.hero small{color:#ffffffb8}.big{font-size:42px;font-weight:700;letter-spacing:-1px;line-height:1.1;margin:4px 0}
-.hero .g{margin-top:14px}.hero .k{background:#ffffff1f;border-radius:14px;padding:10px}.hero .k span{color:#ffffffc4}.hero .k b{font-size:17px}
-h2{font-size:16px;margin:0 0 10px}small{display:block;color:var(--m);font-size:12px}
+:root{--bg:#050912;--c:#0e1626b8;--c2:#162136;--t:#e6f0ff;--m:#7f93b2;--a:#00f0c0;--a2:#7b5cff;--r:#ff5d7a;--l:#ffffff1c}
+*{box-sizing:border-box}body{margin:0;color:var(--t);font:15px/1.45 system-ui,sans-serif;background:radial-gradient(700px 400px at 85% -5%,#7b5cff30,transparent),radial-gradient(600px 400px at 0% 100%,#00f0c022,transparent),linear-gradient(#ffffff08 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,#ffffff08 1px,transparent 1px) 0 0/44px 44px,var(--bg);min-height:100vh}
+main{max-width:860px;margin:0 auto;padding:16px 14px 100px}
+nav{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);width:min(560px,95vw);display:flex;justify-content:space-around;background:#0b1220d9;backdrop-filter:blur(14px);border:1px solid var(--l);border-radius:22px;padding:5px;z-index:5;box-shadow:0 8px 40px #000a}
+nav:empty{display:none}.brand{display:none}
+nav button{flex:1;border:0;background:none;color:var(--m);padding:6px 2px;border-radius:16px;font-size:10px;cursor:pointer}
+nav button b{display:block;font-size:18px;font-weight:400}nav button.on{background:linear-gradient(135deg,#00f0c033,#7b5cff44);color:var(--t);box-shadow:inset 0 0 0 1px #00f0c066}
+@media(min-width:820px){body.in{padding-left:230px}nav{left:0;top:0;bottom:0;transform:none;width:230px;flex-direction:column;justify-content:flex-start;gap:4px;border-radius:0;border-width:0 1px 0 0;padding:18px 12px}
+.brand{display:block;font-weight:700;letter-spacing:2px;margin:6px 10px 18px;background:linear-gradient(90deg,var(--a),var(--a2));-webkit-background-clip:text;color:transparent}
+nav button{flex:none;text-align:left;font-size:14px;padding:11px 14px}nav button b{display:inline;margin-right:10px;font-size:17px}}
+.card{background:var(--c);backdrop-filter:blur(10px);border:1px solid var(--l);border-radius:20px;padding:16px;margin:14px 0;overflow-x:auto}
+.hero{position:relative;background:linear-gradient(135deg,#0a3a4f,#2d2480 70%,#5b3bd6);border:1px solid #00f0c055;border-radius:26px;padding:22px;margin:6px 0 14px;box-shadow:0 0 50px #7b5cff40,inset 0 0 40px #00f0c014}
+.hero small{color:#ffffffb0}.big{font-size:40px;font-weight:700;letter-spacing:-1px;line-height:1.1;margin:4px 0;text-shadow:0 0 24px #00f0c066}
+.hero .g{margin-top:16px}.hero .k{background:#ffffff14;border:1px solid #ffffff18;border-radius:14px;padding:10px}.hero .k span{color:#ffffffbb}.hero .k b{font-size:17px}
+.ring{position:absolute;right:18px;top:18px;width:78px;height:78px;border-radius:50%;background:conic-gradient(var(--a) calc(var(--p)*1%),#ffffff22 0);display:grid;place-items:center;text-align:center;box-shadow:0 0 24px #00f0c055}
+.ring:before{content:"";position:absolute;inset:6px;border-radius:50%;background:#0a1226}.ring b,.ring small{position:relative;line-height:1.1}.ring small{font-size:9px}
+h2{font-size:16px;margin:0 0 10px}h1{margin:6px 0;background:linear-gradient(90deg,var(--a),var(--a2));-webkit-background-clip:text;color:transparent}small{display:block;color:var(--m);font-size:12px}
 .g{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}.k span{color:var(--m);font-size:12px;display:block}.k b{font-size:19px}
 table{width:100%;border-collapse:collapse}td,th{padding:8px 6px;border-bottom:1px solid var(--l);text-align:right;vertical-align:top}
 td:first-child,th:first-child{text-align:left}th{font-size:12px;color:var(--m);font-weight:500}
 .neg{color:var(--r)}.pos{color:var(--a)}
-.bar{height:9px;background:var(--l);border-radius:9px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--a),var(--a2))}.bar i.bad{background:var(--r)}
+.bar{height:8px;background:#ffffff14;border-radius:9px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--a),var(--a2));box-shadow:0 0 10px var(--a)}.bar i.bad{background:var(--r);box-shadow:0 0 10px var(--r)}
 .bi{padding:10px 0;border-bottom:1px solid var(--l)}.bi:last-child{border:0}.bt{display:flex;justify-content:space-between;gap:8px}
-.tl{position:relative;padding-left:22px}.tl:before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--l)}
-.ev{position:relative;display:flex;justify-content:space-between;padding:7px 0}.ev:before{content:"";position:absolute;left:-20px;top:13px;width:10px;height:10px;border-radius:50%;background:var(--r)}.ev.p:before{background:var(--a)}
-.pills{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}.pill{background:var(--c2);border-radius:14px;padding:10px;border:1px solid var(--l)}.pill.bad{border-color:var(--r)}.pill b{display:block}
+.tl{position:relative;padding-left:22px}.tl:before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--a),var(--a2))}
+.ev{position:relative;display:flex;justify-content:space-between;padding:7px 0}.ev:before{content:"";position:absolute;left:-21px;top:13px;width:10px;height:10px;border-radius:50%;background:var(--r);box-shadow:0 0 10px var(--r)}.ev.p:before{background:var(--a);box-shadow:0 0 10px var(--a)}
+.pills{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:8px}.pill{background:var(--c2);border-radius:14px;padding:10px;border:1px solid var(--l)}.pill.bad{border-color:var(--r)}.pill b{display:block}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px}
 .pr{display:grid;grid-template-columns:1fr 120px auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--l)}.pr.ok b{color:var(--a)}
-.sw{border:1px solid var(--l);background:var(--c2);color:var(--m);border-radius:20px;padding:7px 12px;cursor:pointer}.sw.on{background:var(--a);color:#fff;border-color:var(--a)}
-button.p,.add{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;border:0;border-radius:12px;padding:9px 15px;cursor:pointer}
+.sw{border:1px solid var(--l);background:var(--c2);color:var(--m);border-radius:20px;padding:7px 12px;cursor:pointer}.sw.on{background:var(--a);color:#02130e;border-color:var(--a);box-shadow:0 0 14px #00f0c066}
+button.p,.add{background:linear-gradient(135deg,var(--a),var(--a2));color:#02130e;font-weight:600;border:0;border-radius:12px;padding:9px 15px;cursor:pointer}
 .ib{background:none;border:0;color:var(--m);cursor:pointer;padding:2px 6px}
-input,select{width:100%;padding:9px;border:1px solid var(--l);border-radius:10px;background:var(--c2);color:var(--t);font:inherit}
+input,select{width:100%;padding:10px;border:1px solid var(--l);border-radius:12px;background:var(--c2);color:var(--t);font:inherit}input:focus{outline:1px solid var(--a)}
 label{display:block;margin:8px 0;font-size:13px;color:var(--m)}
-dialog{border:0;border-radius:20px;background:var(--c);color:var(--t);width:min(420px,92vw)}
-.r{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}.r button{padding:9px 14px;border-radius:12px;border:1px solid var(--l);background:var(--c2);color:var(--t)}.r .p{background:var(--a);color:#fff;border:0}
+dialog{border:1px solid var(--l);border-radius:20px;background:#0e1626;color:var(--t);width:min(420px,92vw)}dialog::backdrop{background:#000a}
+.r{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}.r button{padding:9px 14px;border-radius:12px;border:1px solid var(--l);background:var(--c2);color:var(--t)}.r .p{background:var(--a);color:#02130e;border:0}
 details summary{cursor:pointer;display:flex;justify-content:space-between;padding:8px 0;list-style:none}
+.login{max-width:340px;margin:12vh auto;text-align:center;background:var(--c);border:1px solid #00f0c044;border-radius:26px;padding:30px;box-shadow:0 0 60px #7b5cff40}.login input,.login button{margin-top:12px;width:100%}.lg{font-size:44px;color:var(--a);text-shadow:0 0 24px var(--a)}
+#msgs{height:52vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:6px}.m{max-width:86%;padding:10px 13px;border-radius:16px;background:var(--c2);border:1px solid var(--l)}.m.u{align-self:flex-end;background:linear-gradient(135deg,#00f0c030,#7b5cff40)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.chips button{border:1px solid var(--l);background:none;color:var(--m);border-radius:16px;padding:6px 11px;cursor:pointer;font-size:12px}
+.in{display:flex;gap:8px}
 #toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--t);color:var(--bg);padding:8px 14px;border-radius:12px;display:none;z-index:9}
 </style></head><body>
 <nav id="nav"></nav><main id="app"></main><dialog id="dlg"></dialog><div id="toast"></div>
@@ -50,8 +59,9 @@ const sum=(a,k)=>a.reduce((s,x)=>s+(+x[k]||0),0);
 const today=ymd(new Date());
 let S={settings:[],balance:[],income:[],loans:[],expenses:[],budgets:[]};
 let tab='home',month=today.slice(0,7);
-let API=localStorage.api||'',TOK=localStorage.tok||'';
-const TABS=[['home','<b>🏠</b>Нүүр'],['inc','<b>💰</b>Орлого'],['loan','<b>🏦</b>Зээл'],['exp','<b>🧾</b>Зарлага'],['bud','<b>🎯</b>Төсөв'],['set','<b>⚙️</b>Тохиргоо']];
+const API='ЭНД_APPS_SCRIPT_WEB_APP_URL'; // нэг удаа тохируулна
+let TOK=localStorage.sess||'';
+const TABS=[['home','<b>⌂</b>Нүүр'],['inc','<b>◈</b>Орлого'],['loan','<b>⛓</b>Зээл'],['exp','<b>▤</b>Зарлага'],['bud','<b>◎</b>Төсөв'],['ai','<b>✦</b>AI туслах'],['set','<b>⚙</b>Тохиргоо']];
 const CATS=['Хувцас','Хоол','Тээвэр','Гэр','Эрүүл мэнд','Зугаа цэнгэл','Бусад'];
 const KIND={fixed:'Тогтмол сарын зээл',long:'Урт хугацааны зээл',other:'Бусад зээл'};
 const cfg=()=>S.settings.find(x=>x.id=='cfg')||{s15:0,sEnd:0};
@@ -61,11 +71,28 @@ function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';se
 
 const post=b=>fetch(API,{method:'POST',body:JSON.stringify({...b,t:TOK})}).then(r=>r.json());
 async function load(){
-  if(!API){tab='set';return render()}
-  try{const j=await(await fetch(API+'?t='+encodeURIComponent(TOK))).json();if(j.error)throw j.error;S=j}
-  catch(e){toast('Холбогдсонгүй: '+e);tab='set'}
+  if(!TOK)return;
+  try{const j=await(await fetch(API+'?t='+encodeURIComponent(TOK))).json();
+    if(j.error=='auth'){localStorage.removeItem('sess');TOK='';return render()}if(j.error)throw j.error;S=j}
+  catch(e){toast('Холбогдсонгүй: '+e)}
   render();
 }
+const loginView=()=>`<div class=login><div class=lg>◈</div><h1>NEO·САНХҮҮ</h1><small>Нууц үгээ оруулж нэвтэрнэ үү</small><input id=pw type=password placeholder="Нууц үг" onkeydown="if(event.key=='Enter')login()"><button class=p onclick="login()">Нэвтрэх</button></div>`;
+async function login(){try{const j=await post({a:'login',pw:$('#pw').value});if(j.error)throw j.error;localStorage.sess=TOK=j.token;tab='home';render();load()}catch(e){toast(e)}}
+let chat=[];
+function ctx(){const b=bal();if(!b)return{};const c=cur(),np=pays(today,add(today,45)).find(p=>!p.got)||{date:add(today,15),amt:0},m=today.slice(0,7),cat={};
+  S.expenses.filter(e=>e.date.slice(0,7)==m).forEach(e=>cat[e.cat||'Бусад']=(cat[e.cat||'Бусад']||0)+ +e.amount);
+  return{өнөөдөр:today,одоогийн_үлдэгдэл:c,дараагийн_цалин:np,цалин_хүртэлх_зээл:dues(add(today,1),add(np.date,-1)),ирэх_60_хоногийн_зээл:dues(add(today,1),add(today,60)).slice(0,14),
+    төсвүүд:S.budgets.slice(-15).map(x=>({нэр:x.name,огноо:x.date,төсөв:+x.amount,гарсан:spent(x.id)})),энэ_сар:monthNet(m),зарлага_төрлөөр:cat}}
+async function ask(t){const q=t||$('#q').value.trim();if(!q)return;
+  const hist=chat.filter(x=>x.t!='…').slice(-6).map(x=>({role:x.r=='u'?'user':'assistant',content:x.t}));
+  chat.push({r:'u',t:q},{r:'a',t:'…'});render();
+  try{const j=await post({a:'ai',q,ctx:ctx(),hist});chat[chat.length-1].t=j.error?'Алдаа: '+j.error:j.text}catch(e){chat[chat.length-1].t='Алдаа: '+e}
+  render()}
+function ai(){const Q=['Цалин хүртэл хэд зарцуулж болох вэ?','Энэ сарын зарлагыг дүгнээд хаана хэмнэхийг хэл','Ирэх сард зээл, зардал хүрэх үү?'];
+  return`<div class=card><h2>✦ AI санхүүгийн туслах</h2><div id=msgs>${chat.map(m=>`<div class="m ${m.r}">${esc(m.t).replace(/\n/g,'<br>')}</div>`).join('')||'<small>Таны үлдэгдэл, зээл, төсөв, зарлагыг харж байгаад асуултад хариулна.</small>'}</div>
+  <div class=chips>${Q.map(x=>`<button onclick="ask('${x}')">${x}</button>`).join('')}</div>
+  <div class=in><input id=q placeholder="Жишээ: 300к-ийн гутал авч болох уу?" onkeydown="if(event.key=='Enter')ask()"><button class=p onclick="ask()">➤</button></div></div>`}
 async function save(col,data,id){
   id=id||'x'+Date.now();
   try{const r=await post({col,id,data});if(r.error)throw r.error}catch(e){return toast('Хадгалж чадсангүй: '+e)}
@@ -121,7 +148,7 @@ function home(){
   const days=Math.max(1,Math.round((D(np.date)-D(today))/864e5));
   const ls=dues(add(today,1),add(np.date,-1)),lsum=sum(ls,'amt');
   const bs=S.budgets.map(x=>({...x,sp:spent(x.id),rem:x.amount-spent(x.id)})).filter(x=>x.date<=np.date&&(x.rem!=0||x.date>=today)).sort((x,y)=>x.date<y.date?-1:1);
-  const need=bs.reduce((s,x)=>s+Math.max(x.rem,0),0),free=c-lsum-need;let av=c-lsum;
+  const need=bs.reduce((s,x)=>s+Math.max(x.rem,0),0),free=c-lsum-need,pct=c>0?Math.max(0,Math.min(100,Math.round(free/c*100))):0;let av=c-lsum;
   const bars=bs.map(x=>{av-=Math.max(x.rem,0);const p=x.amount?Math.min(100,x.sp/x.amount*100):0;
     return`<div class=bi><div class=bt><b>${esc(x.name)}</b><span class="${x.rem<0?'neg':''}">${x.rem<0?'−'+fmt(-x.rem)+' хэтэрсэн':fmt(x.rem)+' үлдсэн'}</span></div><div class=bar><i class="${x.rem<0?'bad':''}" style="width:${x.rem<0?100:p}%"></i></div><small>${fmt(x.sp)} / ${fmt(x.amount)} · ${x.date} · энэ төсвийн дараа ${fmt(av)}</small></div>`}).join('')||'<small>Цалин хүртэл төсөв алга</small>';
   const ev=[...ls.map(d=>({d:d.date,t:d.name,a:-d.amt,k:''})),{d:np.date,t:'Цалин',a:np.amt,k:'p'}].sort((x,y)=>x.d<y.d?-1:1);
@@ -133,7 +160,7 @@ function home(){
     return`<details><summary><span><i class=dot style="background:${col}"></i>${esc(k)}</span><b>${fmt(s)} <small style="display:inline">${Math.round(s/tot*100)}%</small></b></summary><div class=bar><i style="width:${s/tot*100}%;background:${col}"></i></div><table>${v.sort((x,y)=>x.date<y.date?-1:1).map(e=>`<tr><td>${e.date}</td><td>${esc(e.note)}</td><td>${fmt(e.amount)}</td></tr>`).join('')}</table></details>`}).join('')||'<small>Зарлага алга</small>';
   const fc=[0,1,2,3,4,5].map(i=>{const m=ymd(new Date(+today.slice(0,4),+today.slice(5,7)-1+i,1)).slice(0,7),n=monthNet(m);
     return`<div class="pill ${n.net<0?'bad':''}"><small>${m}</small><b class="${n.net<0?'neg':'pos'}">${n.net<0?'Дутна ':'Хүрнэ '}${fmt(Math.abs(n.net))}</b><small>орлого ${fmt(n.inc)}</small></div>`}).join('');
-  return`<div class=hero><small>Цалин хүртэл (${days} хоног) чөлөөтэй зарцуулах</small><div class=big>${free<0?'−':''}${fmt(Math.abs(free))}₮</div>
+  return`<div class=hero><div class=ring style="--p:${pct}"><b>${pct}%</b><small>чөлөөтэй</small></div><small>Цалин хүртэл (${days} хоног) чөлөөтэй зарцуулах</small><div class=big>${free<0?'−':''}${fmt(Math.abs(free))}₮</div>
   <small>${free<0?'Дутагдаж байна — төсвөө хасах хэрэгтэй':'Өдөрт ойролцоогоор '+fmt(free/days)+'₮'}</small>
   <div class=g><div class=k><span>Дансны үлдэгдэл</span><b>${fmt(c)}</b></div><div class=k><span>Зээлд нөөц</span><b>${fmt(lsum)}</b></div><div class=k><span>Төсвийн үлдэгдэл</span><b>${fmt(need)}</b></div><div class=k><span>Цалин ${np.date.slice(5)}</span><b>${fmt(np.amt)}</b></div></div></div>
   <div class=card><h2>Цалин хүртэлх хуваарь</h2><div class=tl>${tl}</div></div>
@@ -181,13 +208,10 @@ function bud(){
 function editBud(id){const r=S.budgets.find(x=>x.id==id)||{};
   form('budgets',[['date','Огноо','date',null,today],['name','Нэр (жишээ: Хувцас хэрэглээ)','text'],['cat','Төрөл','text',null,'','cats'],['amount','Төсөвлөсөн дүн','number']],r)}
 function set(){
-  const c=cfg(),b=bal()||{};
-  return`<div class=card><h2>Холболт</h2><label>Apps Script Web App URL<input id=api value="${esc(API)}"></label><label>Нууц үг (TOKEN)<input id=tok type=password value="${esc(TOK)}"></label>
-  <button class=p onclick="localStorage.api=API=$('#api').value.trim();localStorage.tok=TOK=$('#tok').value.trim();load()">Холбох</button></div>
-  <div class=card><h2>Цалин</h2><label>15-ны цалин<input id=s15 type=number value="${c.s15||''}"></label><label>Сарын сүүлийн цалин<input id=se type=number value="${c.sEnd||''}"></label>
-  <button class=p onclick="save('settings',{s15:+$('#s15').value,sEnd:+$('#se').value},'cfg')">Хадгалах</button></div>
-  <div class=card><h2>Дансны үлдэгдэл</h2><label>Огноо<input id=bd type=date value="${b.date||today}"></label><label>Дүн<input id=ba type=number value="${b.amount??''}"></label>
-  <button class=p onclick="save('balance',{date:$('#bd').value,amount:+$('#ba').value},'bal')">Хадгалах</button></div>`;
+  const b=bal()||{};
+  return`<div class=card><h2>Дансны үлдэгдэл</h2><label>Огноо<input id=bd type=date value="${b.date||today}"></label><label>Дүн<input id=ba type=number value="${b.amount??''}"></label>
+  <button class=p onclick="save('balance',{date:$('#bd').value,amount:+$('#ba').value},'bal')">Хадгалах</button></div>
+  <div class=card><button class=p onclick="localStorage.removeItem('sess');TOK='';chat=[];render()">Гарах</button></div>`;
 }
 function form(col,fields,rec){
   const d=$('#dlg'),cats=[...new Set([...CATS,...S.expenses.map(e=>e.cat),...S.budgets.map(b=>b.cat)].filter(Boolean))];
@@ -201,8 +225,11 @@ function form(col,fields,rec){
     save(col,{...rec,...o},rec.id)};
 }
 function render(){
-  $('#nav').innerHTML=TABS.map(t=>`<button class="${tab==t[0]?'on':''}" onclick="tab='${t[0]}';render()">${t[1]}</button>`).join('');
-  $('#app').innerHTML={home,inc,loan,exp,bud,set}[tab]();
+  document.body.className=TOK?'in':'';
+  if(!TOK){$('#nav').innerHTML='';$('#app').innerHTML=loginView();return}
+  $('#nav').innerHTML='<div class=brand>◈ NEO·САНХҮҮ</div>'+TABS.map(t=>`<button class="${tab==t[0]?'on':''}" onclick="tab='${t[0]}';render()">${t[1]}</button>`).join('');
+  $('#app').innerHTML={home,inc,loan,exp,bud,ai,set}[tab]();
+  const m=$('#msgs');if(m)m.scrollTop=m.scrollHeight;
 }
 render();load();
 </script></body></html>
