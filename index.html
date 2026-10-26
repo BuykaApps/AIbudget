@@ -59,7 +59,7 @@ const sum=(a,k)=>a.reduce((s,x)=>s+(+x[k]||0),0);
 const today=ymd(new Date());
 let S={settings:[],balance:[],income:[],loans:[],expenses:[],budgets:[]};
 let tab='home',month=today.slice(0,7);
-const API='ЭНД_APPS_SCRIPT_WEB_APP_URL'; // нэг удаа тохируулна
+const API='https://script.google.com/macros/s/AKfycbwtvBqnHjBu5xEGD4_AmR46l8bPO1gqKdNzgs7_Mygb5H6Xh2LCvLmAvnDSxIVtlCaa2A/exec'; // нэг удаа тохируулна
 let TOK=localStorage.sess||'';
 const TABS=[['home','<b>⌂</b>Нүүр'],['inc','<b>◈</b>Орлого'],['loan','<b>⛓</b>Зээл'],['exp','<b>▤</b>Зарлага'],['bud','<b>◎</b>Төсөв'],['ai','<b>✦</b>AI туслах'],['set','<b>⚙</b>Тохиргоо']];
 const CATS=['Хувцас','Хоол','Тээвэр','Гэр','Эрүүл мэнд','Зугаа цэнгэл','Бусад'];
