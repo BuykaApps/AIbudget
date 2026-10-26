@@ -5,12 +5,12 @@
 <style>
 :root{--bg:#050912;--c:#0e1626b8;--c2:#162136;--t:#e6f0ff;--m:#7f93b2;--a:#00f0c0;--a2:#7b5cff;--r:#ff5d7a;--l:#ffffff1c}
 *{box-sizing:border-box}body{margin:0;color:var(--t);font:15px/1.45 system-ui,sans-serif;background:radial-gradient(700px 400px at 85% -5%,#7b5cff30,transparent),radial-gradient(600px 400px at 0% 100%,#00f0c022,transparent),linear-gradient(#ffffff08 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,#ffffff08 1px,transparent 1px) 0 0/44px 44px,var(--bg);min-height:100vh}
-main{max-width:860px;margin:0 auto;padding:16px 14px 100px}
+main{max-width:1000px;margin:0 auto;padding:16px 14px 100px}
 nav{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);width:min(560px,95vw);display:flex;justify-content:space-around;background:#0b1220d9;backdrop-filter:blur(14px);border:1px solid var(--l);border-radius:22px;padding:5px;z-index:5;box-shadow:0 8px 40px #000a}
 nav:empty{display:none}.brand{display:none}
 nav button{flex:1;border:0;background:none;color:var(--m);padding:6px 2px;border-radius:16px;font-size:10px;cursor:pointer}
 nav button b{display:block;font-size:18px;font-weight:400}nav button.on{background:linear-gradient(135deg,#00f0c033,#7b5cff44);color:var(--t);box-shadow:inset 0 0 0 1px #00f0c066}
-@media(min-width:820px){body.in{padding-left:230px}nav{left:0;top:0;bottom:0;transform:none;width:230px;flex-direction:column;justify-content:flex-start;gap:4px;border-radius:0;border-width:0 1px 0 0;padding:18px 12px}
+@media(min-width:820px){body.ok{padding-left:230px}nav{left:0;top:0;bottom:0;transform:none;width:230px;flex-direction:column;justify-content:flex-start;gap:4px;border-radius:0;border-width:0 1px 0 0;padding:18px 12px}
 .brand{display:block;font-weight:700;letter-spacing:2px;margin:6px 10px 18px;background:linear-gradient(90deg,var(--a),var(--a2));-webkit-background-clip:text;color:transparent}
 nav button{flex:none;text-align:left;font-size:14px;padding:11px 14px}nav button b{display:inline;margin-right:10px;font-size:17px}}
 .card{background:var(--c);backdrop-filter:blur(10px);border:1px solid var(--l);border-radius:20px;padding:16px;margin:14px 0;overflow-x:auto}
@@ -110,9 +110,10 @@ function pays(a,b){ // цалингийн өдрүүд: 15 ба сарын сү�
   const c=cfg(),r=[];
   months(a,b).forEach(([y,m])=>[[15,c.s15],[eom(y,m),c.sEnd]].forEach(([d,amt])=>{
     const dt=`${y}-${pad(m)}-${pad(d)}`;
-    if(dt>=a&&dt<=b)r.push(((rc)=>({date:dt,amt:rc&&rc.amt!=null?+rc.amt:(+amt||0),got:!!(rc&&rc.got)}))(S.income.find(i=>i.date==dt)));
+    if(dt>=a&&dt<=b)r.push(((rc)=>({date:dt,amt:rc&&rc.amt!=null?+rc.amt:(+amt||0),got:!!(rc&&rc.got)}))(S.income.find(i=>i.date==dt&&!i.extra)));
   }));
-  return r;
+  S.income.filter(i=>i.extra&&i.date>=a&&i.date<=b).forEach(i=>r.push({id:i.id,extra:1,date:i.date,amt:+i.amt||0,got:!!i.got,note:i.note}));
+  return r.sort((x,y)=>x.date<y.date?-1:x.date>y.date?1:(x.extra?1:0)-(y.extra?1:0));
 }
 function dues(a,b){ // зээлийн төлөлтүүд
   const r=[];
@@ -172,13 +173,19 @@ function home(){
 }
 const head=(t,btn)=>`<div style="display:flex;justify-content:space-between;align-items:center"><h2>${t}</h2>${btn}</div>`;
 const act=(col,id,fn)=>`<button class=ib onclick="${fn}('${id}')">✎</button><button class=ib onclick="del('${col}','${id}')">✕</button>`;
+let incM='';
 function inc(){
-  const c=cfg(),ps=pays(add(today,-40),add(today,75)),pm=ps.filter(p=>p.date.slice(0,7)==today.slice(0,7));
+  const c=cfg(),a=incM?incM+'-01':add(today,-40),b=add(a,115),ps=pays(a,b).filter(p=>!p.extra),mk=incM||today.slice(0,7),pm=ps.filter(p=>p.date.slice(0,7)==mk);
   const rows=ps.map(p=>`<div class="pr ${p.got?'ok':''}"><div><b>${p.date}</b><small>${p.date.slice(8)=='15'?'Эхний цалин':'Сүүлийн цалин'}</small></div><input type=number value="${p.amt}" onchange="setPay('${p.date}','amt',+this.value)"><button class="sw ${p.got?'on':''}" onclick="setPay('${p.date}','got',${!p.got})">${p.got?'✔ Орсон':'○ Ороогүй'}</button></div>`).join('');
+  const ex=S.income.filter(i=>i.extra).sort((x,y)=>x.date<y.date?-1:1).map(i=>`<div class="pr ${i.got?'ok':''}"><div><b>${i.date}</b><small>${esc(i.note||'Нэмэлт орлого')}</small></div><div>${fmt(i.amt)} ${act('income',i.id,'editInc')}</div><button class="sw ${i.got?'on':''}" onclick="setX('${i.id}','got',${!i.got})">${i.got?'✔ Орсон':'○ Ороогүй'}</button></div>`).join('')||'<small>Алга</small>';
   return`<div class=card><h2>Цалингийн дүн (сар бүр)</h2><div class=g><label>Эхний цалин (15)<input id=s15 type=number value="${c.s15||''}"></label><label>Сүүлийн цалин<input id=se type=number value="${c.sEnd||''}"></label></div>
   <button class=p onclick="save('settings',{s15:+$('#s15').value,sEnd:+$('#se').value},'cfg')">Хадгалах</button></div>
-  <div class=card><h2>Орсон / ороогүй</h2><small>Энэ сар: орсон ${fmt(sum(pm.filter(p=>p.got),'amt'))} · ороогүй ${fmt(sum(pm.filter(p=>!p.got),'amt'))}</small>${rows}<small style="margin-top:8px">Тухайн сарын дүн өөр бол дүнг нь шууд засна.</small></div>`;
+  <div class=card><h2>Цалин орсон / ороогүй <input type=month value="${mk}" style="width:auto;display:inline;padding:5px" onchange="incM=this.value;render()"></h2><small>Энэ сар: орсон ${fmt(sum(pm.filter(p=>p.got),'amt'))} · ороогүй ${fmt(sum(pm.filter(p=>!p.got),'amt'))} · сараа сольж ирээдүйг харна</small>${rows}</div>
+  <div class=card>${head('Нэмэлт орлого (дурын огноо)','<button class=add onclick="editInc()">+ Орлого</button>')}${ex}</div>`;
 }
+function editInc(id){const o=S.income.find(x=>x.id==id)||{extra:true};
+  form('income',[['date','Огноо','date',null,today],['note','Тайлбар','text'],['amt','Дүн','number'],['got','Орсон эсэх','sel',[['','Ороогүй'],['1','Орсон']]]],{...o,got:o.got?'1':''})}
+function setX(id,k,v){save('income',{...S.income.find(x=>x.id==id),[k]:v},id)}
 function setPay(d,k,v){const p=pays(d,d)[0];save('income',{date:d,amt:p.amt,got:p.got,[k]:v},'i'+d)}
 function loan(){
   const row=l=>{const n=l.kind=='other'?(l.paid?0:1):dues(add(today,1),l.end||'2099-12-31').length;
@@ -225,7 +232,7 @@ function form(col,fields,rec){
     save(col,{...rec,...o},rec.id)};
 }
 function render(){
-  document.body.className=TOK?'in':'';
+  document.body.className=TOK?'ok':'';
   if(!TOK){$('#nav').innerHTML='';$('#app').innerHTML=loginView();return}
   $('#nav').innerHTML='<div class=brand>◈ NEO·САНХҮҮ</div>'+TABS.map(t=>`<button class="${tab==t[0]?'on':''}" onclick="tab='${t[0]}';render()">${t[1]}</button>`).join('');
   $('#app').innerHTML={home,inc,loan,exp,bud,ai,set}[tab]();
