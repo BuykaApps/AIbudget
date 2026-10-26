@@ -70,7 +70,7 @@ const sum=(a,k)=>a.reduce((s,x)=>s+(+x[k]||0),0);
 const today=ymd(new Date());
 let S={settings:[],balance:[],income:[],loans:[],expenses:[],budgets:[]};
 let tab='home',month=today.slice(0,7);
-const API_URL='ЭНД_APPS_SCRIPT_WEB_APP_URL'; // эндээ бичиж болно, эсвэл нэвтрэх дэлгэц дээр нэг удаа оруулбал browser санана
+const API_URL='https://script.google.com/macros/s/AKfycbwtvBqnHjBu5xEGD4_AmR46l8bPO1gqKdNzgs7_Mygb5H6Xh2LCvLmAvnDSxIVtlCaa2A/exec'; // эндээ бичиж болно, эсвэл нэвтрэх дэлгэц дээр нэг удаа оруулбал browser санана
 let API=API_URL.indexOf('http')==0?API_URL:(localStorage.api||'');
 let TOK=localStorage.sess||'';
 const TABS=[['home','<b>⌂</b>Нүүр'],['inc','<b>◈</b>Орлого'],['loan','<b>⛓</b>Зээл'],['exp','<b>▤</b>Зарлага'],['bud','<b>◎</b>Төсөв'],['ai','<b>✦</b>AI туслах'],['set','<b>⚙</b>Тохиргоо']];
