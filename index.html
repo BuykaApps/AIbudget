@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="mn"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Миний санхүү</title>
+<title>FinSet — Хувийн санхүү</title>
 <style>
 :root{--bg:#050912;--c:#0e1626b8;--c2:#162136;--t:#e6f0ff;--m:#7f93b2;--a:#00f0c0;--a2:#7b5cff;--r:#ff5d7a;--l:#ffffff1c}
 *{box-sizing:border-box}body{margin:0;color:var(--t);font:15px/1.45 system-ui,sans-serif;background:radial-gradient(700px 400px at 85% -5%,#7b5cff30,transparent),radial-gradient(600px 400px at 0% 100%,#00f0c022,transparent),linear-gradient(#ffffff08 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,#ffffff08 1px,transparent 1px) 0 0/44px 44px,var(--bg);min-height:100vh}
@@ -55,6 +55,44 @@ details summary{cursor:pointer;display:flex;justify-content:space-between;paddin
 .card{transition:.25s}.card:hover{border-color:#00f0c044}
 .cc{display:inline-flex;gap:7px;align-items:center;background:var(--c2);border:1px solid var(--l);border-radius:16px;padding:5px 6px 5px 12px;margin:4px 4px 0 0}
 #toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--t);color:var(--bg);padding:8px 14px;border-radius:12px;display:none;z-index:9}
+
+/* ---- FinSet-inspired light dashboard redesign ---- */
+:root{--bg:#f6f5ff;--c:#ffffff;--c2:#f5f3ff;--t:#202033;--m:#85849b;--a:#8268f6;--a2:#b5a7ff;--r:#e66b83;--l:#e9e6f3}
+*{box-sizing:border-box}
+body{color:var(--t);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(600px 360px at 80% -10%,#e5ddff88,transparent),#f7f6fc;min-height:100vh}
+main{max-width:1500px;margin:0 auto;padding:26px 30px 100px}
+body.ok main{padding-left:30px}
+.card{background:#fff;backdrop-filter:none;border:1px solid #eeecf5;border-radius:20px;padding:22px;margin:18px 0;overflow-x:auto;box-shadow:0 3px 14px #30205b06;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.card:hover{border-color:#ded6ff;box-shadow:0 10px 28px #3c2a7910;transform:translateY(-1px)}
+.hero{background:linear-gradient(135deg,#e7e0ff 0%,#cfc3ff 55%,#b8a7ff 100%);border:1px solid #d7ccff;border-radius:26px;padding:28px;margin:6px 0 18px;box-shadow:0 12px 34px #8164e51a;animation:none;color:#292044}
+.hero small{color:#625a80}.big{font-size:clamp(34px,4vw,48px);font-weight:750;letter-spacing:-1.8px;line-height:1.15;margin:8px 0;color:#292044;text-shadow:none}
+.hero .g{margin-top:22px}.hero .k{background:#ffffffa8;border:1px solid #ffffffc9;border-radius:16px;padding:13px 14px}.hero .k span{color:#756c92}.hero .k b{font-size:18px;color:#292044}
+.ring{background:conic-gradient(#8268f6 calc(var(--p)*1%),#ffffff90 0);box-shadow:none;width:86px;height:86px;right:24px;top:24px}.ring:before{background:#f0ebff}.ring b{color:#51418e}.ring small{color:#776ba5}
+h1{margin:6px 0;color:#27243b;background:none;-webkit-background-clip:initial}
+h2{font-size:16px;font-weight:700;letter-spacing:-.2px;margin:0 0 14px;color:#29263e}
+small{color:var(--m)}.g{gap:12px}.k span{color:var(--m);font-size:12px}.k b{font-size:20px;letter-spacing:-.4px}
+table{width:100%;border-collapse:collapse}td,th{padding:12px 10px;border-bottom:1px solid #f0eef6;text-align:right;vertical-align:middle}th{font-size:11px;color:#9692aa;font-weight:650;text-transform:uppercase;letter-spacing:.5px}td{color:#39364c}
+.neg{color:#dc6078!important}.pos{color:#5f4bd5!important}
+.bar{height:8px;background:#eeeafd;border-radius:99px;overflow:hidden;margin:8px 0}.bar i{background:linear-gradient(90deg,#8e78fa,#b9aaff);box-shadow:none}.bar i.bad{background:#e66b83;box-shadow:none}
+.bi{padding:13px 0;border-bottom:1px solid #f0eef6}.bt{align-items:center}.pills{gap:12px}.pill{background:#faf9ff;border-radius:15px;padding:13px;border:1px solid #eeebf8}.pill.bad{border-color:#f3c5cf}.pill b{margin:5px 0}
+.sw{border:1px solid #e8e3fb;background:#f8f6ff;color:#8175b5;border-radius:12px;padding:8px 12px;cursor:pointer}.sw.on{background:#e9e3ff;color:#6048d8;border-color:#d5caff;box-shadow:none}
+button.p,.add{background:#8268f6;color:white;font-weight:650;border:0;border-radius:12px;padding:10px 16px;cursor:pointer;box-shadow:0 4px 10px #8268f626;transition:filter .2s,transform .2s}button.p:hover,.add:hover{filter:brightness(1.04);transform:translateY(-1px)}
+.ib{background:#f7f5ff;border:1px solid #efecfa;border-radius:9px;color:#8377b7;cursor:pointer;padding:5px 8px;margin-left:3px}.ib:hover{background:#ebe5ff;color:#5b43ce}
+input,select{width:100%;padding:11px 12px;border:1px solid #e7e3f2;border-radius:12px;background:#fff;color:#29263e;font:inherit}input:focus,select:focus{outline:2px solid #c9bcff;border-color:#aa98ff}
+label{display:block;margin:9px 0;font-size:13px;color:#77718f}
+dialog{border:1px solid #e9e4f5;border-radius:22px;background:#fff;color:#29263e;width:min(440px,92vw);box-shadow:0 24px 80px #20104426}dialog::backdrop{background:#28213e55;backdrop-filter:blur(3px)}.r button{padding:10px 14px;border-radius:12px;border:1px solid #e7e3f2;background:#f7f5fc;color:#5b5672}.r .p{background:#8268f6;color:white;border:0}
+.login{max-width:380px;margin:12vh auto;text-align:center;background:#fff;border:1px solid #ebe6fa;border-radius:26px;padding:34px;box-shadow:0 18px 60px #5e48a51a}.login input,.login button{margin-top:12px;width:100%}.lg{font-size:44px;color:#8268f6;text-shadow:none}
+#msgs{height:52vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:6px}.m{max-width:86%;padding:11px 14px;border-radius:16px;background:#f5f2ff;border:1px solid #ebe5ff}.m.u{align-self:flex-end;background:#e9e2ff;border-color:#d9ceff}
+.chips button{border:1px solid #e5defb;background:#faf9ff;color:#7263a9;border-radius:16px;padding:7px 12px;cursor:pointer;font-size:12px}.chips button:hover{background:#eee9ff}
+.row{padding:13px 8px;border-radius:14px;transition:background .2s,transform .2s}.row:hover{background:#f8f6ff;transform:translateX(2px)}.ic{border-radius:14px}.chip{border-color:#e9e5f3;background:#faf9fd}
+.dh{color:#8c87a0;font-size:11px;letter-spacing:1.2px}.tl:before{background:linear-gradient(#9b87ff,#d5cbff)}.ev:before{background:#e66b83;box-shadow:none}.ev.p:before{background:#8268f6;box-shadow:none}
+.warn{background:#fff4f5;border:1px solid #f5d4da;border-radius:16px;padding:14px 16px;margin:14px 0;color:#7e3345}.ok2{background:#f1efff;border:1px solid #ded6ff;border-radius:16px;padding:14px 16px;margin:14px 0;color:#51418e}
+.cc{background:#faf9ff;border:1px solid #ebe7f5;border-radius:16px}.cc button{color:#a09ab3}
+#toast{background:#29263e;color:#fff;padding:10px 16px;border-radius:12px;box-shadow:0 8px 30px #0002}
+nav{background:#fff;border:1px solid #eeebf5;box-shadow:0 8px 30px #30205b0b;backdrop-filter:blur(14px)}nav button{color:#8d89a0;transition:background .2s,color .2s}nav button.on{background:#eee9ff;color:#6b52e5;box-shadow:none}nav button:hover{background:#f7f4ff;color:#6b52e5}
+@media(min-width:820px){body.ok{padding-left:250px}nav{width:250px;background:#fff;border-right:1px solid #eeebf5;padding:22px 15px;gap:7px}.brand{font-size:17px;letter-spacing:.2px;margin:7px 12px 30px;background:none;-webkit-background-clip:initial;color:#6f56e8}.brand:first-letter{color:#9b85ff}nav button{font-size:14px;padding:13px 15px;border-radius:13px}nav button b{display:inline-block;width:25px;margin-right:8px;font-size:18px;text-align:center}main{padding:28px 34px 50px}}
+@media(max-width:819px){main{padding:14px 13px 100px}.hero{padding:22px 18px}.ring{width:68px;height:68px;right:15px;top:15px}.big{font-size:32px}.card{padding:17px;margin:13px 0}.pr{grid-template-columns:1fr 100px auto;gap:6px}}
+
 </style></head><body>
 <nav id="nav"></nav><main id="app"></main><dialog id="dlg"></dialog><div id="toast"></div>
 <script>
@@ -89,7 +127,7 @@ async function load(){
   catch(e){toast('Холбогдсонгүй: '+e)}
   render();
 }
-const loginView=()=>`<div class=login><div class=lg>◈</div><h1>NEO·САНХҮҮ</h1><small>Нууц үгээ оруулж нэвтэрнэ үү</small>${API?'':'<input id=au placeholder="Apps Script Web App URL">'}<input id=pw type=password placeholder="Нууц үг" onkeydown="if(event.key=='Enter')login()"><button class=p onclick="login()">Нэвтрэх</button></div>`;
+const loginView=()=>`<div class=login><div class=lg>◈</div><h1>FinSet</h1><small>Нууц үгээ оруулж нэвтэрнэ үү</small>${API?'':'<input id=au placeholder="Apps Script Web App URL">'}<input id=pw type=password placeholder="Нууц үг" onkeydown="if(event.key=='Enter')login()"><button class=p onclick="login()">Нэвтрэх</button></div>`;
 async function login(){try{if(!API){const u=$('#au').value.trim();if(u.indexOf('http')!=0)throw 'Web App URL оруулна уу';localStorage.api=API=u}const j=await post({a:'login',pw:$('#pw').value});if(j.error)throw j.error;localStorage.sess=TOK=j.token;tab='home';render();load()}catch(e){toast(e)}}
 let chat=[];
 function ctx(){const b=bal();if(!b)return{};const c=cur(),np=pays(today,add(today,45)).find(p=>!p.got)||{date:add(today,15),amt:0},m=today.slice(0,7),cat={};
@@ -266,7 +304,7 @@ function form(col,fields,rec){
 function render(){
   document.body.className=TOK&&API?'ok':'';
   if(!TOK||!API){$('#nav').innerHTML='';$('#app').innerHTML=loginView();return}
-  $('#nav').innerHTML='<div class=brand>◈ NEO·САНХҮҮ</div>'+TABS.map(t=>`<button class="${tab==t[0]?'on':''}" onclick="tab='${t[0]}';render()">${t[1]}</button>`).join('');
+  $('#nav').innerHTML='<div class=brand>◉ FinSet <small style="margin-top:4px;font-weight:400;letter-spacing:0;color:#9692aa">Хувийн санхүү</small></div>'+TABS.map(t=>`<button class="${tab==t[0]?'on':''}" onclick="tab='${t[0]}';render()">${t[1]}</button>`).join('');
   $('#app').innerHTML={home,inc,loan,exp,bud,ai,set}[tab]();
   const m=$('#msgs');if(m)m.scrollTop=m.scrollHeight;
 }
