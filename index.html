@@ -3,29 +3,38 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Миний санхүү</title>
 <style>
-:root{--bg:#f5f6f2;--c:#fff;--t:#1c2923;--m:#6a7a71;--a:#1f7a5a;--r:#c0392b;--l:#e2e8e3}
-@media(prefers-color-scheme:dark){:root{--bg:#111613;--c:#1a221e;--t:#e8efe9;--m:#92a39a;--a:#4cc597;--r:#ff7b6c;--l:#2a352f}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:15px/1.45 system-ui,sans-serif}
-main{max-width:860px;margin:0 auto;padding:12px 12px 80px}
-nav{position:sticky;top:0;background:var(--bg);display:flex;gap:6px;overflow-x:auto;padding:10px 12px;border-bottom:1px solid var(--l);z-index:2}
-nav button{white-space:nowrap;border:1px solid var(--l);background:var(--c);color:var(--t);padding:7px 13px;border-radius:20px;cursor:pointer}
-nav button.on{background:var(--a);color:#fff;border-color:var(--a)}
-.card{background:var(--c);border:1px solid var(--l);border-radius:14px;padding:14px;margin:12px 0;overflow-x:auto}
-h2{font-size:16px;margin:0 0 8px}small{display:block;color:var(--m);font-size:12px}
-.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
-.k b{display:block;font-size:20px}.k span{color:var(--m);font-size:12px}
-table{width:100%;border-collapse:collapse}td,th{padding:7px 6px;border-bottom:1px solid var(--l);text-align:right;vertical-align:top}
+:root{--bg:#0b100e;--c:#151d19;--c2:#1c2721;--t:#eaf2ed;--m:#8a9b92;--a:#3ddc97;--a2:#2bb3c0;--r:#ff6b6b;--l:#26332c}
+@media(prefers-color-scheme:light){:root{--bg:#eef3ef;--c:#fff;--c2:#f1f6f2;--t:#16221c;--m:#64766c;--a:#12916a;--a2:#1b8fa0;--r:#d9433a;--l:#dde7e0}}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 400px at 80% -10%,#1b8f7833,transparent),var(--bg);color:var(--t);font:15px/1.45 system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:14px 14px 100px}
+nav{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);width:min(520px,94vw);display:flex;justify-content:space-around;background:color-mix(in srgb,var(--c) 88%,transparent);backdrop-filter:blur(12px);border:1px solid var(--l);border-radius:22px;padding:6px;z-index:5;box-shadow:0 8px 30px #0006}
+nav button{flex:1;border:0;background:none;color:var(--m);padding:6px 2px;border-radius:16px;font-size:11px;cursor:pointer}
+nav button b{display:block;font-size:19px;font-weight:400}nav button.on{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff}
+.card{background:var(--c);border:1px solid var(--l);border-radius:20px;padding:16px;margin:14px 0;overflow-x:auto}
+.hero{background:linear-gradient(135deg,#0f5c46,#1b8f78 55%,#2bb3c0);color:#fff;border-radius:26px;padding:22px;margin:6px 0 14px;box-shadow:0 14px 40px #1b8f7840}
+.hero small{color:#ffffffb8}.big{font-size:42px;font-weight:700;letter-spacing:-1px;line-height:1.1;margin:4px 0}
+.hero .g{margin-top:14px}.hero .k{background:#ffffff1f;border-radius:14px;padding:10px}.hero .k span{color:#ffffffc4}.hero .k b{font-size:17px}
+h2{font-size:16px;margin:0 0 10px}small{display:block;color:var(--m);font-size:12px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}.k span{color:var(--m);font-size:12px;display:block}.k b{font-size:19px}
+table{width:100%;border-collapse:collapse}td,th{padding:8px 6px;border-bottom:1px solid var(--l);text-align:right;vertical-align:top}
 td:first-child,th:first-child{text-align:left}th{font-size:12px;color:var(--m);font-weight:500}
 .neg{color:var(--r)}.pos{color:var(--a)}
-button.p,.add{background:var(--a);color:#fff;border:0;border-radius:9px;padding:8px 14px;cursor:pointer}
+.bar{height:9px;background:var(--l);border-radius:9px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--a),var(--a2))}.bar i.bad{background:var(--r)}
+.bi{padding:10px 0;border-bottom:1px solid var(--l)}.bi:last-child{border:0}.bt{display:flex;justify-content:space-between;gap:8px}
+.tl{position:relative;padding-left:22px}.tl:before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--l)}
+.ev{position:relative;display:flex;justify-content:space-between;padding:7px 0}.ev:before{content:"";position:absolute;left:-20px;top:13px;width:10px;height:10px;border-radius:50%;background:var(--r)}.ev.p:before{background:var(--a)}
+.pills{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}.pill{background:var(--c2);border-radius:14px;padding:10px;border:1px solid var(--l)}.pill.bad{border-color:var(--r)}.pill b{display:block}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px}
+.pr{display:grid;grid-template-columns:1fr 120px auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--l)}.pr.ok b{color:var(--a)}
+.sw{border:1px solid var(--l);background:var(--c2);color:var(--m);border-radius:20px;padding:7px 12px;cursor:pointer}.sw.on{background:var(--a);color:#fff;border-color:var(--a)}
+button.p,.add{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;border:0;border-radius:12px;padding:9px 15px;cursor:pointer}
 .ib{background:none;border:0;color:var(--m);cursor:pointer;padding:2px 6px}
-input,select{width:100%;padding:8px;border:1px solid var(--l);border-radius:8px;background:var(--bg);color:var(--t);font:inherit}
+input,select{width:100%;padding:9px;border:1px solid var(--l);border-radius:10px;background:var(--c2);color:var(--t);font:inherit}
 label{display:block;margin:8px 0;font-size:13px;color:var(--m)}
-dialog{border:0;border-radius:14px;background:var(--c);color:var(--t);width:min(420px,92vw)}
-.r{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}.r button{padding:8px 14px;border-radius:9px;border:1px solid var(--l);background:var(--bg);color:var(--t)}
-.r .p{background:var(--a);color:#fff;border:0}
-details summary{cursor:pointer;display:flex;justify-content:space-between;padding:6px 0}
-#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--t);color:var(--bg);padding:8px 14px;border-radius:10px;display:none}
+dialog{border:0;border-radius:20px;background:var(--c);color:var(--t);width:min(420px,92vw)}
+.r{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}.r button{padding:9px 14px;border-radius:12px;border:1px solid var(--l);background:var(--c2);color:var(--t)}.r .p{background:var(--a);color:#fff;border:0}
+details summary{cursor:pointer;display:flex;justify-content:space-between;padding:8px 0;list-style:none}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--t);color:var(--bg);padding:8px 14px;border-radius:12px;display:none;z-index:9}
 </style></head><body>
 <nav id="nav"></nav><main id="app"></main><dialog id="dlg"></dialog><div id="toast"></div>
 <script>
@@ -42,7 +51,7 @@ const today=ymd(new Date());
 let S={settings:[],balance:[],income:[],loans:[],expenses:[],budgets:[]};
 let tab='home',month=today.slice(0,7);
 let API=localStorage.api||'',TOK=localStorage.tok||'';
-const TABS=[['home','Нүүр'],['inc','Орлого'],['loan','Зээл'],['exp','Зарлага'],['bud','Төсөв'],['set','Тохиргоо']];
+const TABS=[['home','<b>🏠</b>Нүүр'],['inc','<b>💰</b>Орлого'],['loan','<b>🏦</b>Зээл'],['exp','<b>🧾</b>Зарлага'],['bud','<b>🎯</b>Төсөв'],['set','<b>⚙️</b>Тохиргоо']];
 const CATS=['Хувцас','Хоол','Тээвэр','Гэр','Эрүүл мэнд','Зугаа цэнгэл','Бусад'];
 const KIND={fixed:'Тогтмол сарын зээл',long:'Урт хугацааны зээл',other:'Бусад зээл'};
 const cfg=()=>S.settings.find(x=>x.id=='cfg')||{s15:0,sEnd:0};
@@ -74,7 +83,7 @@ function pays(a,b){ // цалингийн өдрүүд: 15 ба сарын сү�
   const c=cfg(),r=[];
   months(a,b).forEach(([y,m])=>[[15,c.s15],[eom(y,m),c.sEnd]].forEach(([d,amt])=>{
     const dt=`${y}-${pad(m)}-${pad(d)}`;
-    if(dt>=a&&dt<=b)r.push({date:dt,amt:+amt||0,got:S.income.some(i=>i.date==dt&&i.got)});
+    if(dt>=a&&dt<=b)r.push(((rc)=>({date:dt,amt:rc&&rc.amt!=null?+rc.amt:(+amt||0),got:!!(rc&&rc.got)}))(S.income.find(i=>i.date==dt)));
   }));
   return r;
 }
@@ -107,44 +116,43 @@ function monthNet(m){
 /* ---- хуудсууд ---- */
 function home(){
   const b=bal();
-  if(!b)return'<div class=card>Эхлээд «Тохиргоо» хэсэгт дансны үлдэгдэл, цалингийн дүнг оруулна уу.</div>';
+  if(!b)return'<div class=card>Эхлээд «Тохиргоо» хэсэгт дансны үлдэгдлээ оруулна уу.</div>';
   const c=cur(),np=pays(today,add(today,45)).find(p=>!p.got)||{date:add(today,15),amt:0};
+  const days=Math.max(1,Math.round((D(np.date)-D(today))/864e5));
   const ls=dues(add(today,1),add(np.date,-1)),lsum=sum(ls,'amt');
-  const bs=S.budgets.map(x=>({...x,sp:spent(x.id),rem:x.amount-spent(x.id)}))
-    .filter(x=>x.date<=np.date&&(x.rem!=0||x.date>=today)).sort((x,y)=>x.date<y.date?-1:1);
-  let av=c-lsum;
-  const rows=bs.map(x=>{av-=Math.max(x.rem,0);return`<tr><td>${esc(x.name)}<small>${x.date}</small></td><td>${fmt(x.amount)}</td><td>${fmt(x.sp)}</td>
-  <td class="${x.rem<0?'neg':''}">${x.rem<0?'−'+fmt(-x.rem)+' хэтэрсэн':fmt(x.rem)}</td><td class="${av<0?'neg':'pos'}">${fmt(av)}</td></tr>`}).join('');
+  const bs=S.budgets.map(x=>({...x,sp:spent(x.id),rem:x.amount-spent(x.id)})).filter(x=>x.date<=np.date&&(x.rem!=0||x.date>=today)).sort((x,y)=>x.date<y.date?-1:1);
+  const need=bs.reduce((s,x)=>s+Math.max(x.rem,0),0),free=c-lsum-need;let av=c-lsum;
+  const bars=bs.map(x=>{av-=Math.max(x.rem,0);const p=x.amount?Math.min(100,x.sp/x.amount*100):0;
+    return`<div class=bi><div class=bt><b>${esc(x.name)}</b><span class="${x.rem<0?'neg':''}">${x.rem<0?'−'+fmt(-x.rem)+' хэтэрсэн':fmt(x.rem)+' үлдсэн'}</span></div><div class=bar><i class="${x.rem<0?'bad':''}" style="width:${x.rem<0?100:p}%"></i></div><small>${fmt(x.sp)} / ${fmt(x.amount)} · ${x.date} · энэ төсвийн дараа ${fmt(av)}</small></div>`}).join('')||'<small>Цалин хүртэл төсөв алга</small>';
+  const ev=[...ls.map(d=>({d:d.date,t:d.name,a:-d.amt,k:''})),{d:np.date,t:'Цалин',a:np.amt,k:'p'}].sort((x,y)=>x.d<y.d?-1:1);
+  const tl=ev.map(e=>`<div class="ev ${e.k}"><span>${e.t}<small>${e.d}</small></span><b class="${e.a<0?'neg':'pos'}">${e.a<0?'−':'+'}${fmt(Math.abs(e.a))}</b></div>`).join('');
   const mn=monthNet(month),cat={};
   S.expenses.filter(e=>e.date.slice(0,7)==month).forEach(e=>(cat[e.cat||'Бусад']=cat[e.cat||'Бусад']||[]).push(e));
-  const catHtml=Object.entries(cat).sort((x,y)=>sum(y[1],'amount')-sum(x[1],'amount')).map(([k,v])=>
-    `<details><summary><span>${esc(k)}</span><b>${fmt(sum(v,'amount'))}</b></summary><table>${v.sort((x,y)=>x.date<y.date?-1:1).map(e=>`<tr><td>${e.date}</td><td>${esc(e.note)}</td><td>${fmt(e.amount)}</td></tr>`).join('')}</table></details>`).join('')||'<small>Зарлага алга</small>';
-  const fc=[0,1,2,3,4,5].map(i=>{const d=new Date(+today.slice(0,4),+today.slice(5,7)-1+i,1),m=ymd(d).slice(0,7),n=monthNet(m);
-    return`<tr><td>${m}</td><td>${fmt(n.inc)}</td><td>${fmt(n.ln)}</td><td>${fmt(n.ex+n.plan)}</td><td class="${n.net<0?'neg':'pos'}">${n.net<0?'Дутна ':'Хүрнэ '}${fmt(n.net)}</td></tr>`}).join('');
-  return`<div class=card><div class=g>
-  <div class=k><span>Одоогийн үлдэгдэл (${b.date}-с тооцов)</span><b class="${c<0?'neg':''}">${fmt(c)}</b></div>
-  <div class=k><span>Дараагийн цалин ${np.date}</span><b>${fmt(np.amt)}</b></div>
-  <div class=k><span>Цалин хүртэл зээлд нөөцлөх</span><b>${fmt(lsum)}</b></div>
-  <div class=k><span>Чөлөөтэй (зээл, төсвөөс хойш)</span><b class="${av<0?'neg':'pos'}">${fmt(av)}</b></div></div></div>
-  <div class=card><h2>Цалин хүртэл юунд хэд зарцуулж болох вэ</h2>
-  <table><tr><th>Төсөөлсөн зардал</th><th>Төсөв</th><th>Гарсан</th><th>Үлдсэн</th><th>Нөөцөөс хойш</th></tr>
-  <tr><td>Зээл (${ls.length} төлөлт)</td><td></td><td></td><td>${fmt(lsum)}</td><td>${fmt(c-lsum)}</td></tr>${rows}</table></div>
-  <div class=card><h2>Сарын тайлан <input type=month value="${month}" style="width:auto;display:inline" onchange="month=this.value;render()"></h2>
-  <div class=g><div class=k><span>Орлого</span><b>${fmt(mn.inc)}</b></div><div class=k><span>Зээл</span><b>${fmt(mn.ln)}</b></div>
-  <div class=k><span>Зарлага</span><b>${fmt(mn.ex)}</b></div><div class=k><span>Төсвийн үлдэгдэл</span><b>${fmt(mn.plan)}</b></div>
-  <div class=k><span>Хүрэлцэх эсэх</span><b class="${mn.net<0?'neg':'pos'}">${fmt(mn.net)}</b></div></div>
-  <h2 style="margin-top:14px">Төрлөөр (дарж задлах)</h2>${catHtml}</div>
-  <div class=card><h2>Ирэх 6 сарын хүрэлцээ</h2><table><tr><th>Сар</th><th>Орлого</th><th>Зээл</th><th>Зарлага+төсөв</th><th>Дүн</th></tr>${fc}</table></div>`;
+  const tot=mn.ex||1;
+  const catHtml=Object.entries(cat).sort((x,y)=>sum(y[1],'amount')-sum(x[1],'amount')).map(([k,v],i)=>{const s=sum(v,'amount'),col=`hsl(${(i*57+150)%360} 65% 55%)`;
+    return`<details><summary><span><i class=dot style="background:${col}"></i>${esc(k)}</span><b>${fmt(s)} <small style="display:inline">${Math.round(s/tot*100)}%</small></b></summary><div class=bar><i style="width:${s/tot*100}%;background:${col}"></i></div><table>${v.sort((x,y)=>x.date<y.date?-1:1).map(e=>`<tr><td>${e.date}</td><td>${esc(e.note)}</td><td>${fmt(e.amount)}</td></tr>`).join('')}</table></details>`}).join('')||'<small>Зарлага алга</small>';
+  const fc=[0,1,2,3,4,5].map(i=>{const m=ymd(new Date(+today.slice(0,4),+today.slice(5,7)-1+i,1)).slice(0,7),n=monthNet(m);
+    return`<div class="pill ${n.net<0?'bad':''}"><small>${m}</small><b class="${n.net<0?'neg':'pos'}">${n.net<0?'Дутна ':'Хүрнэ '}${fmt(Math.abs(n.net))}</b><small>орлого ${fmt(n.inc)}</small></div>`}).join('');
+  return`<div class=hero><small>Цалин хүртэл (${days} хоног) чөлөөтэй зарцуулах</small><div class=big>${free<0?'−':''}${fmt(Math.abs(free))}₮</div>
+  <small>${free<0?'Дутагдаж байна — төсвөө хасах хэрэгтэй':'Өдөрт ойролцоогоор '+fmt(free/days)+'₮'}</small>
+  <div class=g><div class=k><span>Дансны үлдэгдэл</span><b>${fmt(c)}</b></div><div class=k><span>Зээлд нөөц</span><b>${fmt(lsum)}</b></div><div class=k><span>Төсвийн үлдэгдэл</span><b>${fmt(need)}</b></div><div class=k><span>Цалин ${np.date.slice(5)}</span><b>${fmt(np.amt)}</b></div></div></div>
+  <div class=card><h2>Цалин хүртэлх хуваарь</h2><div class=tl>${tl}</div></div>
+  <div class=card><h2>Төсөөлсөн зардал</h2>${bars}</div>
+  <div class=card><h2>Сарын тайлан <input type=month value="${month}" style="width:auto;display:inline;padding:5px" onchange="month=this.value;render()"></h2>
+  <div class=g><div class=k><span>Орлого</span><b>${fmt(mn.inc)}</b></div><div class=k><span>Зээл</span><b>${fmt(mn.ln)}</b></div><div class=k><span>Зарлага</span><b>${fmt(mn.ex)}</b></div><div class=k><span>Төсвийн үлдэгдэл</span><b>${fmt(mn.plan)}</b></div><div class=k><span>Хүрэлцэх эсэх</span><b class="${mn.net<0?'neg':'pos'}">${fmt(mn.net)}</b></div></div>
+  <h2 style="margin-top:16px">Төрлөөр (дарж задлах)</h2>${catHtml}</div>
+  <div class=card><h2>Ирэх 6 сарын хүрэлцээ</h2><div class=pills>${fc}</div></div>`;
 }
 const head=(t,btn)=>`<div style="display:flex;justify-content:space-between;align-items:center"><h2>${t}</h2>${btn}</div>`;
 const act=(col,id,fn)=>`<button class=ib onclick="${fn}('${id}')">✎</button><button class=ib onclick="del('${col}','${id}')">✕</button>`;
 function inc(){
-  const a=add(today,-45),b=add(today,60);
-  const rows=pays(a,b).map(p=>`<tr><td>${p.date}</td><td>${fmt(p.amt)}</td><td><button class=ib onclick="tog('${p.date}')" style="color:${p.got?'var(--a)':'var(--r)'}">${p.got?'✔ Орсон':'○ Ороогүй'}</button></td></tr>`).join('');
-  return`<div class=card>${head('Цалин (15 ба сарын сүүл)','')}<table><tr><th>Огноо</th><th>Дүн</th><th>Төлөв</th></tr>${rows}</table><small>Дүнг «Тохиргоо» хэсэгт өөрчилнө.</small></div>`;
+  const c=cfg(),ps=pays(add(today,-40),add(today,75)),pm=ps.filter(p=>p.date.slice(0,7)==today.slice(0,7));
+  const rows=ps.map(p=>`<div class="pr ${p.got?'ok':''}"><div><b>${p.date}</b><small>${p.date.slice(8)=='15'?'Эхний цалин':'Сүүлийн цалин'}</small></div><input type=number value="${p.amt}" onchange="setPay('${p.date}','amt',+this.value)"><button class="sw ${p.got?'on':''}" onclick="setPay('${p.date}','got',${!p.got})">${p.got?'✔ Орсон':'○ Ороогүй'}</button></div>`).join('');
+  return`<div class=card><h2>Цалингийн дүн (сар бүр)</h2><div class=g><label>Эхний цалин (15)<input id=s15 type=number value="${c.s15||''}"></label><label>Сүүлийн цалин<input id=se type=number value="${c.sEnd||''}"></label></div>
+  <button class=p onclick="save('settings',{s15:+$('#s15').value,sEnd:+$('#se').value},'cfg')">Хадгалах</button></div>
+  <div class=card><h2>Орсон / ороогүй</h2><small>Энэ сар: орсон ${fmt(sum(pm.filter(p=>p.got),'amt'))} · ороогүй ${fmt(sum(pm.filter(p=>!p.got),'amt'))}</small>${rows}<small style="margin-top:8px">Тухайн сарын дүн өөр бол дүнг нь шууд засна.</small></div>`;
 }
-function tog(d){const o=S.income.find(i=>i.date==d);o&&o.got?del2('income','i'+d):save('income',{date:d,got:true},'i'+d)}
-async function del2(c,id){try{await post({col:c,id,del:1})}catch(e){return toast(e)}S[c]=S[c].filter(x=>x.id!=id);render()}
+function setPay(d,k,v){const p=pays(d,d)[0];save('income',{date:d,amt:p.amt,got:p.got,[k]:v},'i'+d)}
 function loan(){
   const row=l=>{const n=l.kind=='other'?(l.paid?0:1):dues(add(today,1),l.end||'2099-12-31').length;
     return`<tr><td>${esc(l.name)}<small>${KIND[l.kind]}</small></td><td>${l.kind=='other'?'':l.day+'-ны өдөр'}<small>${l.end||''}</small></td><td>${fmt(l.amount)}</td><td>${l.kind=='other'?(l.paid?'төлсөн':fmt(l.amount)):(l.end?n+' удаа · '+fmt(n*l.amount):'')}</td><td>${act('loans',l.id,'editLoan')}</td></tr>`};
