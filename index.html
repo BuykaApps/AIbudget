@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="mn"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Миний санхүү</title>
+<style>
+:root{--bg:#f5f6f2;--c:#fff;--t:#1c2923;--m:#6a7a71;--a:#1f7a5a;--r:#c0392b;--l:#e2e8e3}
+@media(prefers-color-scheme:dark){:root{--bg:#111613;--c:#1a221e;--t:#e8efe9;--m:#92a39a;--a:#4cc597;--r:#ff7b6c;--l:#2a352f}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:15px/1.45 system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:12px 12px 80px}
+nav{position:sticky;top:0;background:var(--bg);display:flex;gap:6px;overflow-x:auto;padding:10px 12px;border-bottom:1px solid var(--l);z-index:2}
+nav button{white-space:nowrap;border:1px solid var(--l);background:var(--c);color:var(--t);padding:7px 13px;border-radius:20px;cursor:pointer}
+nav button.on{background:var(--a);color:#fff;border-color:var(--a)}
+.card{background:var(--c);border:1px solid var(--l);border-radius:14px;padding:14px;margin:12px 0;overflow-x:auto}
+h2{font-size:16px;margin:0 0 8px}small{display:block;color:var(--m);font-size:12px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.k b{display:block;font-size:20px}.k span{color:var(--m);font-size:12px}
+table{width:100%;border-collapse:collapse}td,th{padding:7px 6px;border-bottom:1px solid var(--l);text-align:right;vertical-align:top}
+td:first-child,th:first-child{text-align:left}th{font-size:12px;color:var(--m);font-weight:500}
+.neg{color:var(--r)}.pos{color:var(--a)}
+button.p,.add{background:var(--a);color:#fff;border:0;border-radius:9px;padding:8px 14px;cursor:pointer}
+.ib{background:none;border:0;color:var(--m);cursor:pointer;padding:2px 6px}
+input,select{width:100%;padding:8px;border:1px solid var(--l);border-radius:8px;background:var(--bg);color:var(--t);font:inherit}
+label{display:block;margin:8px 0;font-size:13px;color:var(--m)}
+dialog{border:0;border-radius:14px;background:var(--c);color:var(--t);width:min(420px,92vw)}
+.r{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}.r button{padding:8px 14px;border-radius:9px;border:1px solid var(--l);background:var(--bg);color:var(--t)}
+.r .p{background:var(--a);color:#fff;border:0}
+details summary{cursor:pointer;display:flex;justify-content:space-between;padding:6px 0}
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--t);color:var(--bg);padding:8px 14px;border-radius:10px;display:none}
+</style></head><body>
+<nav id="nav"></nav><main id="app"></main><dialog id="dlg"></dialog><div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const D=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const add=(s,n)=>{const d=D(s);d.setDate(d.getDate()+n);return ymd(d)};
+const eom=(y,m)=>new Date(y,m,0).getDate();
+const fmt=n=>Math.round(+n||0).toLocaleString('en-US');
+const sum=(a,k)=>a.reduce((s,x)=>s+(+x[k]||0),0);
+const today=ymd(new Date());
+let S={settings:[],balance:[],income:[],loans:[],expenses:[],budgets:[]};
+let tab='home',month=today.slice(0,7);
+let API=localStorage.api||'',TOK=localStorage.tok||'';
+const TABS=[['home','Нүүр'],['inc','Орлого'],['loan','Зээл'],['exp','Зарлага'],['bud','Төсөв'],['set','Тохиргоо']];
+const CATS=['Хувцас','Хоол','Тээвэр','Гэр','Эрүүл мэнд','Зугаа цэнгэл','Бусад'];
+const KIND={fixed:'Тогтмол сарын зээл',long:'Урт хугацааны зээл',other:'Бусад зээл'};
+const cfg=()=>S.settings.find(x=>x.id=='cfg')||{s15:0,sEnd:0};
+const bal=()=>S.balance.find(x=>x.id=='bal');
+const spent=id=>sum(S.expenses.filter(e=>e.budgetId==id),'amount');
+function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',3500)}
+
+const post=b=>fetch(API,{method:'POST',body:JSON.stringify({...b,t:TOK})}).then(r=>r.json());
+async function load(){
+  if(!API){tab='set';return render()}
+  try{const j=await(await fetch(API+'?t='+encodeURIComponent(TOK))).json();if(j.error)throw j.error;S=j}
+  catch(e){toast('Холбогдсонгүй: '+e);tab='set'}
+  render();
+}
+async function save(col,data,id){
+  id=id||'x'+Date.now();
+  try{const r=await post({col,id,data});if(r.error)throw r.error}catch(e){return toast('Хадгалж чадсангүй: '+e)}
+  const a=S[col],i=a.findIndex(x=>x.id==id),o={...data,id};i>=0?a[i]=o:a.push(o);render();
+}
+async function del(col,id){
+  if(!confirm('Устгах уу?'))return;
+  try{await post({col,id,del:1})}catch(e){return toast('Алдаа: '+e)}
+  S[col]=S[col].filter(x=>x.id!=id);render();
+}
+
+/* ---- тооцоолол ---- */
+function months(a,b){const r=[],e=D(b);let d=new Date(D(a).getFullYear(),D(a).getMonth(),1);while(d<=e){r.push([d.getFullYear(),d.getMonth()+1]);d=new Date(d.getFullYear(),d.getMonth()+1,1)}return r}
+function pays(a,b){ // цалингийн өдрүүд: 15 ба сарын сүүлийн өдөр
+  const c=cfg(),r=[];
+  months(a,b).forEach(([y,m])=>[[15,c.s15],[eom(y,m),c.sEnd]].forEach(([d,amt])=>{
+    const dt=`${y}-${pad(m)}-${pad(d)}`;
+    if(dt>=a&&dt<=b)r.push({date:dt,amt:+amt||0,got:S.income.some(i=>i.date==dt&&i.got)});
+  }));
+  return r;
+}
+function dues(a,b){ // зээлийн төлөлтүүд
+  const r=[];
+  S.loans.forEach(l=>{
+    if(l.kind=='other'){if(l.end>=a&&l.end<=b&&!l.paid)r.push({date:l.end,name:l.name,amt:+l.amount})}
+    else months(a,b).forEach(([y,m])=>{
+      const dt=`${y}-${pad(m)}-${pad(Math.min(+l.day||1,eom(y,m)))}`;
+      if(dt>=a&&dt<=b&&(!l.end||dt<=l.end))r.push({date:dt,name:l.name,amt:+l.amount});
+    });
+  });
+  return r.sort((x,y)=>x.date<y.date?-1:1);
+}
+function cur(){ // одоогийн үлдэгдэл = үлдэгдэл + хүлээн авсан цалин − төлөгдсөн зээл − зарлага (үлдэгдлийн огнооноос хойших)
+  const b=bal();if(!b)return null;const a=add(b.date,1);let v=+b.amount;
+  pays(a,today).forEach(p=>{if(p.got)v+=p.amt});
+  dues(a,today).forEach(d=>v-=d.amt);
+  S.expenses.forEach(e=>{if(e.date>b.date)v-=+e.amount});
+  return v;
+}
+function monthNet(m){
+  const[y,mm]=m.split('-').map(Number),a=m+'-01',b=m+'-'+pad(eom(y,mm));
+  const inc=sum(pays(a,b),'amt'),ln=sum(dues(a,b),'amt');
+  const ex=sum(S.expenses.filter(e=>e.date>=a&&e.date<=b),'amount');
+  const plan=S.budgets.filter(x=>x.date>=a&&x.date<=b).reduce((s,x)=>s+Math.max(x.amount-spent(x.id),0),0);
+  return{inc,ln,ex,plan,net:inc-ln-ex-plan};
+}
+
+/* ---- хуудсууд ---- */
+function home(){
+  const b=bal();
+  if(!b)return'<div class=card>Эхлээд «Тохиргоо» хэсэгт дансны үлдэгдэл, цалингийн дүнг оруулна уу.</div>';
+  const c=cur(),np=pays(today,add(today,45)).find(p=>!p.got)||{date:add(today,15),amt:0};
+  const ls=dues(add(today,1),add(np.date,-1)),lsum=sum(ls,'amt');
+  const bs=S.budgets.map(x=>({...x,sp:spent(x.id),rem:x.amount-spent(x.id)}))
+    .filter(x=>x.date<=np.date&&(x.rem!=0||x.date>=today)).sort((x,y)=>x.date<y.date?-1:1);
+  let av=c-lsum;
+  const rows=bs.map(x=>{av-=Math.max(x.rem,0);return`<tr><td>${esc(x.name)}<small>${x.date}</small></td><td>${fmt(x.amount)}</td><td>${fmt(x.sp)}</td>
+  <td class="${x.rem<0?'neg':''}">${x.rem<0?'−'+fmt(-x.rem)+' хэтэрсэн':fmt(x.rem)}</td><td class="${av<0?'neg':'pos'}">${fmt(av)}</td></tr>`}).join('');
+  const mn=monthNet(month),cat={};
+  S.expenses.filter(e=>e.date.slice(0,7)==month).forEach(e=>(cat[e.cat||'Бусад']=cat[e.cat||'Бусад']||[]).push(e));
+  const catHtml=Object.entries(cat).sort((x,y)=>sum(y[1],'amount')-sum(x[1],'amount')).map(([k,v])=>
+    `<details><summary><span>${esc(k)}</span><b>${fmt(sum(v,'amount'))}</b></summary><table>${v.sort((x,y)=>x.date<y.date?-1:1).map(e=>`<tr><td>${e.date}</td><td>${esc(e.note)}</td><td>${fmt(e.amount)}</td></tr>`).join('')}</table></details>`).join('')||'<small>Зарлага алга</small>';
+  const fc=[0,1,2,3,4,5].map(i=>{const d=new Date(+today.slice(0,4),+today.slice(5,7)-1+i,1),m=ymd(d).slice(0,7),n=monthNet(m);
+    return`<tr><td>${m}</td><td>${fmt(n.inc)}</td><td>${fmt(n.ln)}</td><td>${fmt(n.ex+n.plan)}</td><td class="${n.net<0?'neg':'pos'}">${n.net<0?'Дутна ':'Хүрнэ '}${fmt(n.net)}</td></tr>`}).join('');
+  return`<div class=card><div class=g>
+  <div class=k><span>Одоогийн үлдэгдэл (${b.date}-с тооцов)</span><b class="${c<0?'neg':''}">${fmt(c)}</b></div>
+  <div class=k><span>Дараагийн цалин ${np.date}</span><b>${fmt(np.amt)}</b></div>
+  <div class=k><span>Цалин хүртэл зээлд нөөцлөх</span><b>${fmt(lsum)}</b></div>
+  <div class=k><span>Чөлөөтэй (зээл, төсвөөс хойш)</span><b class="${av<0?'neg':'pos'}">${fmt(av)}</b></div></div></div>
+  <div class=card><h2>Цалин хүртэл юунд хэд зарцуулж болох вэ</h2>
+  <table><tr><th>Төсөөлсөн зардал</th><th>Төсөв</th><th>Гарсан</th><th>Үлдсэн</th><th>Нөөцөөс хойш</th></tr>
+  <tr><td>Зээл (${ls.length} төлөлт)</td><td></td><td></td><td>${fmt(lsum)}</td><td>${fmt(c-lsum)}</td></tr>${rows}</table></div>
+  <div class=card><h2>Сарын тайлан <input type=month value="${month}" style="width:auto;display:inline" onchange="month=this.value;render()"></h2>
+  <div class=g><div class=k><span>Орлого</span><b>${fmt(mn.inc)}</b></div><div class=k><span>Зээл</span><b>${fmt(mn.ln)}</b></div>
+  <div class=k><span>Зарлага</span><b>${fmt(mn.ex)}</b></div><div class=k><span>Төсвийн үлдэгдэл</span><b>${fmt(mn.plan)}</b></div>
+  <div class=k><span>Хүрэлцэх эсэх</span><b class="${mn.net<0?'neg':'pos'}">${fmt(mn.net)}</b></div></div>
+  <h2 style="margin-top:14px">Төрлөөр (дарж задлах)</h2>${catHtml}</div>
+  <div class=card><h2>Ирэх 6 сарын хүрэлцээ</h2><table><tr><th>Сар</th><th>Орлого</th><th>Зээл</th><th>Зарлага+төсөв</th><th>Дүн</th></tr>${fc}</table></div>`;
+}
+const head=(t,btn)=>`<div style="display:flex;justify-content:space-between;align-items:center"><h2>${t}</h2>${btn}</div>`;
+const act=(col,id,fn)=>`<button class=ib onclick="${fn}('${id}')">✎</button><button class=ib onclick="del('${col}','${id}')">✕</button>`;
+function inc(){
+  const a=add(today,-45),b=add(today,60);
+  const rows=pays(a,b).map(p=>`<tr><td>${p.date}</td><td>${fmt(p.amt)}</td><td><button class=ib onclick="tog('${p.date}')" style="color:${p.got?'var(--a)':'var(--r)'}">${p.got?'✔ Орсон':'○ Ороогүй'}</button></td></tr>`).join('');
+  return`<div class=card>${head('Цалин (15 ба сарын сүүл)','')}<table><tr><th>Огноо</th><th>Дүн</th><th>Төлөв</th></tr>${rows}</table><small>Дүнг «Тохиргоо» хэсэгт өөрчилнө.</small></div>`;
+}
+function tog(d){const o=S.income.find(i=>i.date==d);o&&o.got?del2('income','i'+d):save('income',{date:d,got:true},'i'+d)}
+async function del2(c,id){try{await post({col:c,id,del:1})}catch(e){return toast(e)}S[c]=S[c].filter(x=>x.id!=id);render()}
+function loan(){
+  const row=l=>{const n=l.kind=='other'?(l.paid?0:1):dues(add(today,1),l.end||'2099-12-31').length;
+    return`<tr><td>${esc(l.name)}<small>${KIND[l.kind]}</small></td><td>${l.kind=='other'?'':l.day+'-ны өдөр'}<small>${l.end||''}</small></td><td>${fmt(l.amount)}</td><td>${l.kind=='other'?(l.paid?'төлсөн':fmt(l.amount)):(l.end?n+' удаа · '+fmt(n*l.amount):'')}</td><td>${act('loans',l.id,'editLoan')}</td></tr>`};
+  const sec=(k)=>`<div class=card>${head(KIND[k],`<button class=add onclick="editLoan(null,'${k}')">+ Нэмэх</button>`)}<table><tr><th>Нэр</th><th>Өдөр / дуусах</th><th>Сард / дүн</th><th>Үлдсэн</th><th></th></tr>${S.loans.filter(l=>l.kind==k).map(row).join('')}</table></div>`;
+  return sec('fixed')+sec('long')+sec('other');
+}
+function editLoan(id,k){const r=S.loans.find(x=>x.id==id)||{kind:k};
+  const f=[['name','Нэр','text'],['amount',r.kind=='other'?'Төлөх дүн':'Сард төлөх дүн','number']];
+  r.kind=='other'?f.push(['end','Төлөх огноо','date',null,today],['paid','Төлсөн эсэх','sel',[['','Үгүй'],['1','Тийм']]]):f.push(['day','Сар бүрийн төлөх өдөр (1-31)','number'],['end','Дуусах огноо','date']);
+  form('loans',f,r)}
+function exp(){
+  const bs=S.budgets.reduce((m,b)=>(m[b.id]=b.name,m),{});
+  const rows=[...S.expenses].sort((x,y)=>x.date<y.date?1:-1).slice(0,150).map(e=>`<tr><td>${e.date}<small>${esc(e.cat)}${e.budgetId&&bs[e.budgetId]?' · '+esc(bs[e.budgetId]):''}</small></td><td>${esc(e.note)}</td><td>${fmt(e.amount)}</td><td>${act('expenses',e.id,'editExp')}</td></tr>`).join('');
+  return`<div class=card>${head('Зарлагын бүртгэл','<button class=add onclick="editExp()">+ Зарлага</button>')}<table><tr><th>Огноо</th><th>Утга</th><th>Дүн</th><th></th></tr>${rows}</table></div>`;
+}
+function editExp(id){const r=S.expenses.find(x=>x.id==id)||{};
+  form('expenses',[['date','Огноо','date',null,today],['note','Утга','text'],['amount','Дүн','number'],['cat','Төрөл','text',null,'','cats'],
+  ['budgetId','Аль төсөвт хамаарах','sel',[['','— Төсөвгүй —'],...S.budgets.map(b=>[b.id,b.name+' ('+b.date+')'])]]],r)}
+function bud(){
+  const rows=[...S.budgets].sort((x,y)=>x.date<y.date?1:-1).map(b=>{const s=spent(b.id),r=b.amount-s;
+    return`<tr><td>${esc(b.name)}<small>${b.date} · ${esc(b.cat)}</small></td><td>${fmt(b.amount)}</td><td>${fmt(s)}</td><td class="${r<0?'neg':'pos'}">${r<0?'−'+fmt(-r)+' хэтэрсэн':fmt(r)}</td><td>${act('budgets',b.id,'editBud')}</td></tr>`}).join('');
+  const T=sum(S.budgets,'amount'),Sp=sum(S.budgets.map(b=>({v:spent(b.id)})),'v');
+  return`<div class=card>${head('Төсөвлөсөн зардал','<button class=add onclick="editBud()">+ Төсөв</button>')}<table><tr><th>Нэр</th><th>Төсөв</th><th>Гарсан</th><th>Үлдсэн</th><th></th></tr>${rows}
+  <tr><td><b>Нийт</b></td><td><b>${fmt(T)}</b></td><td><b>${fmt(Sp)}</b></td><td><b>${fmt(T-Sp)}</b></td><td></td></tr></table></div>`;
+}
+function editBud(id){const r=S.budgets.find(x=>x.id==id)||{};
+  form('budgets',[['date','Огноо','date',null,today],['name','Нэр (жишээ: Хувцас хэрэглээ)','text'],['cat','Төрөл','text',null,'','cats'],['amount','Төсөвлөсөн дүн','number']],r)}
+function set(){
+  const c=cfg(),b=bal()||{};
+  return`<div class=card><h2>Холболт</h2><label>Apps Script Web App URL<input id=api value="${esc(API)}"></label><label>Нууц үг (TOKEN)<input id=tok type=password value="${esc(TOK)}"></label>
+  <button class=p onclick="localStorage.api=API=$('#api').value.trim();localStorage.tok=TOK=$('#tok').value.trim();load()">Холбох</button></div>
+  <div class=card><h2>Цалин</h2><label>15-ны цалин<input id=s15 type=number value="${c.s15||''}"></label><label>Сарын сүүлийн цалин<input id=se type=number value="${c.sEnd||''}"></label>
+  <button class=p onclick="save('settings',{s15:+$('#s15').value,sEnd:+$('#se').value},'cfg')">Хадгалах</button></div>
+  <div class=card><h2>Дансны үлдэгдэл</h2><label>Огноо<input id=bd type=date value="${b.date||today}"></label><label>Дүн<input id=ba type=number value="${b.amount??''}"></label>
+  <button class=p onclick="save('balance',{date:$('#bd').value,amount:+$('#ba').value},'bal')">Хадгалах</button></div>`;
+}
+function form(col,fields,rec){
+  const d=$('#dlg'),cats=[...new Set([...CATS,...S.expenses.map(e=>e.cat),...S.budgets.map(b=>b.cat)].filter(Boolean))];
+  d.innerHTML=`<form method=dialog><h2>${rec.id?'Засах':'Нэмэх'}</h2><datalist id=cats>${cats.map(c=>`<option>${esc(c)}`).join('')}</datalist>`+fields.map(f=>`<label>${f[1]}`+(f[2]=='sel'
+    ?`<select name=${f[0]}>${f[3].map(o=>`<option value="${esc(o[0])}" ${String(rec[f[0]]??'')==String(o[0])?'selected':''}>${esc(o[1])}</option>`).join('')}</select>`
+    :`<input name=${f[0]} type=${f[2]} ${f[2]=='number'?'step=any':''} ${f[5]?'list='+f[5]:''} value="${esc(rec[f[0]]??f[4]??'')}">`)+'</label>').join('')
+    +'<div class=r><button value=x>Болих</button><button value=ok class=p>Хадгалах</button></div></form>';
+  d.showModal();
+  d.querySelector('form').onsubmit=e=>{if(e.submitter.value!='ok')return;const o=Object.fromEntries(new FormData(e.target));
+    fields.forEach(f=>{if(f[2]=='number')o[f[0]]=+o[f[0]]||0});if(o.paid==='')delete o.paid;
+    save(col,{...rec,...o},rec.id)};
+}
+function render(){
+  $('#nav').innerHTML=TABS.map(t=>`<button class="${tab==t[0]?'on':''}" onclick="tab='${t[0]}';render()">${t[1]}</button>`).join('');
+  $('#app').innerHTML={home,inc,loan,exp,bud,set}[tab]();
+}
+render();load();
+</script></body></html>
