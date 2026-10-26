@@ -70,7 +70,7 @@ const sum=(a,k)=>a.reduce((s,x)=>s+(+x[k]||0),0);
 const today=ymd(new Date());
 let S={settings:[],balance:[],income:[],loans:[],expenses:[],budgets:[]};
 let tab='home',month=today.slice(0,7);
-const API_URL='https://script.google.com/macros/s/AKfycbwtvBqnHjBu5xEGD4_AmR46l8bPO1gqKdNzgs7_Mygb5H6Xh2LCvLmAvnDSxIVtlCaa2A/exec'; // эндээ бичиж болно, эсвэл нэвтрэх дэлгэц дээр нэг удаа оруулбал browser санана
+const API_URL='ЭНД_APPS_SCRIPT_WEB_APP_URL'; // эндээ бичиж болно, эсвэл нэвтрэх дэлгэц дээр нэг удаа оруулбал browser санана
 let API=API_URL.indexOf('http')==0?API_URL:(localStorage.api||'');
 let TOK=localStorage.sess||'';
 const TABS=[['home','<b>⌂</b>Нүүр'],['inc','<b>◈</b>Орлого'],['loan','<b>⛓</b>Зээл'],['exp','<b>▤</b>Зарлага'],['bud','<b>◎</b>Төсөв'],['ai','<b>✦</b>AI туслах'],['set','<b>⚙</b>Тохиргоо']];
@@ -130,10 +130,10 @@ function pays(a,b){ // цалингийн өдрүүд: 15 ба сарын сү�
 function dues(a,b){ // зээлийн төлөлтүүд
   const r=[];
   S.loans.forEach(l=>{
-    if(l.kind=='other'){if(l.end>=a&&l.end<=b&&!l.paid)r.push({date:l.end,name:l.name,amt:+l.amount})}
+    if(l.kind=='other'){if(l.end>=a&&l.end<=b&&!l.paid)r.push({date:l.end,name:l.name,amt:+l.amount,src:l.src||'sal'})}
     else months(a,b).forEach(([y,m])=>{
       const dt=`${y}-${pad(m)}-${pad(Math.min(+l.day||1,eom(y,m)))}`;
-      if(dt>=a&&dt<=b&&(!l.end||dt<=l.end))r.push({date:dt,name:l.name,amt:+l.amount});
+      if(dt>=a&&dt<=b&&(!l.end||dt<=l.end))r.push({date:dt,name:l.name,amt:+l.amount,src:l.src||'sal'});
     });
   });
   return r.sort((x,y)=>x.date<y.date?-1:1);
@@ -160,20 +160,23 @@ const catOpts=r=>[...new Set([...cats(),r.cat].filter(Boolean))].map(c=>[c,c]);
 const resUntil=()=>{const r=S.settings.find(x=>x.id=='res');return r&&r.until||''};
 function addCat(){const v=$('#nc').value.trim();if(v)save('settings',{list:[...new Set([...cats(),v])]},'cats')}
 function delCat(i){const l=cats().slice();l.splice(i,1);save('settings',{list:l},'cats')}
+const resv=()=>{const r=S.settings.find(x=>x.id=='res');return r&&r.amount!=null?r:null};
+function resLeft(){const r=resv();if(!r)return 0;return Math.max(0,+r.amount-sum(dues(add(r.date,1),today).filter(d=>d.src=='res'),'amt'))}
 function home(){
   const b=bal();
   if(!b)return'<div class=card>Эхлээд «Тохиргоо» хэсэгт дансны үлдэгдлээ оруулна уу.</div>';
   const c=cur(),np=pays(today,add(today,45)).find(p=>!p.got)||{date:add(today,15),amt:0};
   const days=Math.max(1,Math.round((D(np.date)-D(today))/864e5));
-  const ru=resUntil(),hz=ru&&ru>np.date?ru:add(np.date,-1),ls=dues(add(today,1),hz),lsum=sum(ls,'amt');
+  const ls=dues(add(today,1),add(np.date,-1)),rl=resLeft(),lsum=sum(ls.filter(d=>d.src!='res'),'amt')+rl;
   const bs=S.budgets.map(x=>({...x,sp:spent(x.id),rem:x.amount-spent(x.id)})).filter(x=>x.date<=np.date&&(x.rem!=0||x.date>=today)).sort((x,y)=>x.date<y.date?-1:1);
   const need=bs.reduce((s,x)=>s+Math.max(x.rem,0),0),free=c-lsum-need,pct=c>0?Math.max(0,Math.min(100,Math.round(free/c*100))):0;let av=c-lsum;
   const bars=bs.map(x=>{av-=Math.max(x.rem,0);const p=x.amount?Math.min(100,x.sp/x.amount*100):0;
     return`<div class=bi><div class=bt><b>${esc(x.name)}</b><span class="${x.rem<0?'neg':''}">${x.rem<0?'−'+fmt(-x.rem)+' хэтэрсэн':fmt(x.rem)+' үлдсэн'}</span></div><div class=bar><i class="${x.rem<0?'bad':''}" style="width:${x.rem<0?100:p}%"></i></div><small>${fmt(x.sp)} / ${fmt(x.amount)} · ${x.date} · энэ төсвийн дараа ${fmt(av)}</small></div>`}).join('')||'<small>Цалин хүртэл төсөв алга</small>';
-  const ev=[...ls.map(d=>({d:d.date,t:d.name,a:-d.amt,k:''})),{d:np.date,t:'Цалин',a:np.amt,k:'p'}].sort((x,y)=>x.d<y.d?-1:1);
+  const ev=[...dues(add(today,1),add(np.date,35)).map(d=>({d:d.date,t:d.name+(d.src=='res'?' ◈':''),a:-d.amt,k:''})),{d:np.date,t:'Цалин',a:np.amt,k:'p'}].sort((x,y)=>x.d<y.d?-1:1);
   const tl=ev.map(e=>`<div class="ev ${e.k}"><span>${e.t}<small>${e.d}</small></span><b class="${e.a<0?'neg':'pos'}">${e.a<0?'−':'+'}${fmt(Math.abs(e.a))}</b></div>`).join('');
-  const ub=sum(S.expenses.filter(e=>!e.budgetId&&e.date>b.date),'amount'),ov=bs.reduce((a,x)=>a+Math.max(-x.rem,0),0);
+  const rn=sum(dues(add(today,1),add(today,400)).filter(d=>d.src=='res'),'amt'),ub=sum(S.expenses.filter(e=>!e.budgetId&&e.date>b.date),'amount'),ov=bs.reduce((a,x)=>a+Math.max(-x.rem,0),0);
   const banner=(free<0?`<div class=warn><b>✖ ${np.date}-ны цалин хүртэл ${fmt(-free)}₮ дутна</b><small>Төсвөө хасах эсвэл зарлагаа хойшлуулна уу.</small></div>`:`<div class=ok2><b>✔ ${np.date}-ны цалин хүртэл хүрнэ</b><small>Төсөвлөөгүй зарлагад ердөө ${fmt(free)}₮ нөөц үлдсэн.</small></div>`)
+   +(rl>0||rn>0?`<div class=${rl>=rn?'ok2':'warn'}><b>◈ Хуримтлал: ${fmt(rl)}₮</b><small>Хуримтлалаас төлөх үлдсэн төлөлт ${fmt(rn)}₮ · ${rl>=rn?'зөрүү +'+fmt(rl-rn):'дутагдал '+fmt(rn-rl)}₮</small></div>`:'')
    +(ub>0?`<div class=warn><b>⚠ Төсөвлөөгүй зардал: ${fmt(ub)}₮</b><small>Төсөвт холбоогүй зарлага чөлөөт үлдэгдлээс шууд хасагдаж байна. Төсөвлөөгүй зардал гаргахгүй байхыг хичээгээрэй.</small></div>`:'')
    +(ov>0?`<div class=warn><b>⚠ Төсвөөс хэтэрсэн: ${fmt(ov)}₮</b><small>${bs.filter(x=>x.rem<0).map(x=>esc(x.name)+' −'+fmt(-x.rem)).join(' · ')}</small></div>`:'');
   const mn=monthNet(month),cat={};
@@ -185,8 +188,8 @@ function home(){
     return`<div class="pill ${n.net<0?'bad':''}"><small>${m}</small><b class="${n.net<0?'neg':'pos'}">${n.net<0?'Дутна ':'Хүрнэ '}${fmt(Math.abs(n.net))}</b><small>орлого ${fmt(n.inc)}</small></div>`}).join('');
   return`<div class=hero><div class=ring style="--p:${pct}"><b>${pct}%</b><small>чөлөөтэй</small></div><small>Цалин хүртэл (${days} хоног) чөлөөтэй зарцуулах</small><div class=big>${free<0?'−':''}${fmt(Math.abs(free))}₮</div>
   <small>${free<0?'Дутагдаж байна — төсвөө хасах хэрэгтэй':'Өдөрт ойролцоогоор '+fmt(free/days)+'₮'}</small>
-  <div class=g><div class=k><span>Дансны үлдэгдэл</span><b>${fmt(c)}</b></div><div class=k><span>Зээлд нөөц${ru&&ru>np.date?' ('+ru.slice(5)+' хүртэл)':''}</span><b>${fmt(lsum)}</b></div><div class=k><span>Төсвийн үлдэгдэл</span><b>${fmt(need)}</b></div><div class=k><span>Цалин ${np.date.slice(5)}</span><b>${fmt(np.amt)}</b></div></div></div>
-  ${banner}<div class=card><h2>Цалин хүртэлх хуваарь</h2><div class=tl>${tl}</div></div>
+  <div class=g><div class=k><span>Дансны үлдэгдэл</span><b>${fmt(c)}</b></div><div class=k><span>Зээлд нөөц (хуримтлал + цалингаас)</span><b>${fmt(lsum)}</b></div><div class=k><span>Төсвийн үлдэгдэл</span><b>${fmt(need)}</b></div><div class=k><span>Цалин ${np.date.slice(5)}</span><b>${fmt(np.amt)}</b></div></div></div>
+  ${banner}<div class=card><h2>Ирэх хуваарь <small style="display:inline">◈ = хуримтлалаас</small></h2><div class=tl>${tl}</div></div>
   <div class=card><h2>Төсөөлсөн зардал</h2>${bars}</div>
   <div class=card><h2>Сарын тайлан <input type=month value="${month}" style="width:auto;display:inline;padding:5px" onchange="month=this.value;render()"></h2>
   <div class=g><div class=k><span>Орлого</span><b>${fmt(mn.inc)}</b></div><div class=k><span>Зээл</span><b>${fmt(mn.ln)}</b></div><div class=k><span>Зарлага</span><b>${fmt(mn.ex)}</b></div><div class=k><span>Төсвийн үлдэгдэл</span><b>${fmt(mn.plan)}</b></div><div class=k><span>Хүрэлцэх эсэх</span><b class="${mn.net<0?'neg':'pos'}">${fmt(mn.net)}</b></div></div>
@@ -211,12 +214,12 @@ function setX(id,k,v){save('income',{...S.income.find(x=>x.id==id),[k]:v},id)}
 function setPay(d,k,v){const p=pays(d,d)[0];save('income',{date:d,amt:p.amt,got:p.got,[k]:v},'i'+d)}
 function loan(){
   const row=l=>{const n=l.kind=='other'?(l.paid?0:1):dues(add(today,1),l.end||'2099-12-31').length;
-    return`<tr><td>${esc(l.name)}<small>${KIND[l.kind]}</small></td><td>${l.kind=='other'?'':l.day+'-ны өдөр'}<small>${l.end||''}</small></td><td>${fmt(l.amount)}</td><td>${l.kind=='other'?(l.paid?'төлсөн':fmt(l.amount)):(l.end?n+' удаа · '+fmt(n*l.amount):'')}</td><td>${act('loans',l.id,'editLoan')}</td></tr>`};
+    return`<tr><td>${esc(l.name)}<small>${KIND[l.kind]} · ${l.src=='res'?'хуримтлалаас':'цалингаас'}</small></td><td>${l.kind=='other'?'':l.day+'-ны өдөр'}<small>${l.end||''}</small></td><td>${fmt(l.amount)}</td><td>${l.kind=='other'?(l.paid?'төлсөн':fmt(l.amount)):(l.end?n+' удаа · '+fmt(n*l.amount):'')}</td><td>${act('loans',l.id,'editLoan')}</td></tr>`};
   const sec=(k)=>`<div class=card>${head(KIND[k],`<button class=add onclick="editLoan(null,'${k}')">+ Нэмэх</button>`)}<table><tr><th>Нэр</th><th>Өдөр / дуусах</th><th>Сард / дүн</th><th>Үлдсэн</th><th></th></tr>${S.loans.filter(l=>l.kind==k).map(row).join('')}</table></div>`;
   return sec('fixed')+sec('long')+sec('other');
 }
-function editLoan(id,k){const r=S.loans.find(x=>x.id==id)||{kind:k};
-  const f=[['name','Нэр','text'],['amount',r.kind=='other'?'Төлөх дүн':'Сард төлөх дүн','number']];
+function editLoan(id,k){const r=S.loans.find(x=>x.id==id)||{kind:k,src:'res'};
+  const f=[['name','Нэр','text'],['amount',r.kind=='other'?'Төлөх дүн':'Сард төлөх дүн','number'],['src','Хаанаас төлөх','sel',[['res','Хуримтлалаас'],['sal','Цалингаас']]]];
   r.kind=='other'?f.push(['end','Төлөх огноо','date',null,today],['paid','Төлсөн эсэх','sel',[['','Үгүй'],['1','Тийм']]]):f.push(['day','Сар бүрийн төлөх өдөр (1-31)','number'],['end','Дуусах огноо','date']);
   form('loans',f,r)}
 function exp(){
@@ -232,17 +235,19 @@ function editExp(id){const r=S.expenses.find(x=>x.id==id)||{};
 function bud(){
   const rows=[...S.budgets].sort((x,y)=>x.date<y.date?1:-1).map(b=>{const s=spent(b.id),r=b.amount-s,p=b.amount?Math.min(100,s/b.amount*100):0,h=colorOf(b.cat);
     return`<div class=bi><div class=bt><b><i class=dot style="background:hsl(${h} 75% 55%)"></i>${esc(b.name)}</b><span>${act('budgets',b.id,'editBud')}</span></div><div class=bar><i class="${r<0?'bad':''}" style="width:${r<0?100:p}%"></i></div><div class=bt><small>${fmt(s)} / ${fmt(b.amount)} · ${b.date}</small><b class="${r<0?'neg':'pos'}">${r<0?'−'+fmt(-r)+' хэтэрсэн':fmt(r)+' үлдсэн'}</b></div></div>`}).join('');
-  const T=sum(S.budgets,'amount'),Sp=S.budgets.reduce((a,b)=>a+spent(b.id),0);
-  return`<div class=card>${head('Төсөвлөсөн зардал','<button class=add onclick="editBud()">+ Төсөв</button>')}<div class=g><div class=k><span>Нийт төсөв</span><b>${fmt(T)}</b></div><div class=k><span>Гарсан</span><b>${fmt(Sp)}</b></div><div class=k><span>Үлдсэн</span><b class="${T-Sp<0?'neg':'pos'}">${fmt(T-Sp)}</b></div></div></div><div class=card>${rows||'<small>Төсөв алга</small>'}</div>`;
+  const T=sum(S.budgets,'amount'),Sp=S.budgets.reduce((a,b)=>a+spent(b.id),0),pool=(bal()?+bal().amount:0)-(resv()?+resv().amount:0);
+  return`<div class=card>${head('Төсөвлөсөн зардал','<button class=add onclick="editBud()">+ Төсөв</button>')}<div class=g><div class=k><span>Төсөвт хуваарилах (үлдэгдэл − хуримтлал)</span><b>${fmt(pool)}</b></div><div class=k><span>Хуваарилаагүй</span><b class="${pool-T<0?'neg':'pos'}">${fmt(pool-T)}</b></div><div class=k><span>Нийт төсөв</span><b>${fmt(T)}</b></div><div class=k><span>Гарсан</span><b>${fmt(Sp)}</b></div><div class=k><span>Үлдсэн</span><b class="${T-Sp<0?'neg':'pos'}">${fmt(T-Sp)}</b></div></div></div><div class=card>${rows||'<small>Төсөв алга</small>'}</div>`;
 }
 function editBud(id){const r=S.budgets.find(x=>x.id==id)||{};
   form('budgets',[['date','Огноо','date',null,today],['name','Нэр (жишээ: Хувцас хэрэглээ)','text'],['cat','Төрөл','sel',catOpts(r)],['amount','Төсөвлөсөн дүн','number']],r)}
 function set(){
-  const b=bal()||{},ru=resUntil();
+  const b=bal()||{},rs=resv()||{},rl=resLeft(),rn=sum(dues(add(today,1),add(today,400)).filter(d=>d.src=='res'),'amt');
   return`<div class=card><h2>Дансны үлдэгдэл</h2><label>Огноо<input id=bd type=date value="${b.date||today}"></label><label>Дүн<input id=ba type=number value="${b.amount??''}"></label>
   <button class=p onclick="save('balance',{date:$('#bd').value,amount:+$('#ba').value},'bal')">Хадгалах</button></div>
-  <div class=card><h2>Зээлийн нөөц (хуримтлал)</h2><small>Энэ огноо хүртэлх бүх зээлийн төлөлтийг урьдчилан нөөцлөж, чөлөөт үлдэгдлээс хасна.</small><label>Хүртэл<input id=ru type=date value="${ru}"></label>
-  <button class=p onclick="save('settings',{until:$('#ru').value},'res')">Хадгалах</button><small style="margin-top:8px">Одоогийн нөөц: <b>${fmt(sum(dues(add(today,1),ru||today),'amt'))}₮</b> (өнөөдрөөс ${ru||'—'} хүртэлх зээлүүд)</small></div>
+  <div class=card><h2>Зээлийн хуримтлал</h2><small>Зээл төлөхөөр тусгаарлаж хадгалсан мөнгө. Төсөвт хуваарилах дүнгээс хасагдана.</small>
+  <label>Хуримтлал хийсэн огноо<input id=rd type=date value="${rs.date||b.date||today}"></label><label>Хуримтлалын дүн<input id=ra type=number value="${rs.amount??''}"></label>
+  <button class=p onclick="save('settings',{date:$('#rd').value,amount:+$('#ra').value},'res')">Хадгалах</button>
+  <small style="margin-top:8px">Үлдсэн хуримтлал: <b>${fmt(rl)}₮</b> · хуримтлалаас төлөх үлдсэн төлөлт: <b>${fmt(rn)}₮</b> · ${rl>=rn?'зөрүү +'+fmt(rl-rn):'дутагдал '+fmt(rn-rl)}₮</small></div>
   <div class=card><h2>Зарлагын төрөл</h2>${cats().map((c,i)=>`<span class=cc><i class=dot style="background:hsl(${colorOf(c)} 75% 55%);margin:0"></i>${esc(c)}<button class=ib onclick="delCat(${i})">✕</button></span>`).join('')}
   <div class=in style="margin-top:12px"><input id=nc placeholder="Шинэ төрөл" onkeydown="if(event.key=='Enter')addCat()"><button class=p onclick="addCat()">+</button></div></div>
   <div class=card><button class=p onclick="localStorage.removeItem('sess');TOK='';chat=[];render()">Гарах</button></div>`;
